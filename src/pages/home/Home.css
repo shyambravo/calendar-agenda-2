@@ -1,0 +1,53 @@
+.home-container {
+    max-width: 70%;
+    margin: 0 auto;
+    height: 100vh;
+    overflow: hidden;
+}
+.home-header {
+    height: 100px;
+    background-color: rgb(26,112,197);
+    display: flex;
+    padding: 5px;
+    color: white;
+}
+.date {
+    margin: 0 10px;
+}
+
+.date input {
+    color: white;
+}
+
+.date h4 {
+    margin: 5px 0;
+}
+
+.date-search {
+    margin: 15px 10px 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.agenda-listing {
+    display: flex;
+    background-color: #f5f5f5;
+    justify-content: center;
+}
+
+.list {
+    width: 100%;
+    height: calc(100vh - 120px);
+    overflow: auto;
+    margin-bottom: 200px;
+}
+
+.card {
+    width: 500px;
+    background: white;
+    text-align: center;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    padding: 5px;
+    margin: 15px auto;
+}
