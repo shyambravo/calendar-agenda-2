@@ -6,8 +6,8 @@ const EventList = Backbone.Collection.extend({
   // Reference to this collection's model.
   model: Event,
 
-  viewEvents: (fromDate, toDate) => {
-    let events = getEventsByDate(fromDate, toDate);
+  viewEvents: (fromDate, toDate, calendarName) => {
+    let events = getEventsByDate(fromDate, toDate, calendarName);
     let eventsList = [];
     for(calendarEvent in events) {
         eventsList.push(new Event(calendarEvent));
