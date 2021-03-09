@@ -4,10 +4,7 @@ const Event = Backbone.Model.extend({
     defaults: {
         title: "",
         description: "",
-        fromDate: "",
-        toDate: "",
-        fromTime: "",
-        toTime: "",
+        date: ""
     },
   
 

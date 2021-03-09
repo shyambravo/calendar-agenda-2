@@ -4,6 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { agenda } from "./textdata";
 import { getEventsByDate } from "../../services/Events";
+import { EventStore } from "../../store/events";
 
 export default class Home extends Component {
   constructor(props) {
@@ -11,17 +12,30 @@ export default class Home extends Component {
     this.state = {
       eventList: null,
     };
+    this.reset = this.reset.bind(this);
   }
-  componentDidMount() {
-    if (eventList == null) {
-      this.setState({
-        eventList: agenda,
-      });
-    }
 
-    getEventsByDate();
+  reset = (data) => {
+    console.log(data);
+    this.setState({
+      eventList: null,
+    });
+  };
+  componentDidMount() {
+    this.setState(
+      {
+        eventList: new EventStore(agenda),
+      },
+      () => {
+        this.state.eventList.initializeEvents(this.reset);
+      }
+    );
   }
+
   render() {
+    if (this.state.eventList != null) {
+      console.log(this.state.eventList.eventCollection);
+    }
     return (
       <div className="home-container">
         <div className="home-header">
@@ -39,14 +53,23 @@ export default class Home extends Component {
         </div>
         <div className="agenda-listing">
           <div className="list">
-            {this.state.eventList.map((e, index) => (
-              <div className="card" key={index}>
-                <h3>{e.title}</h3>
-                <p>{e.description}</p>
-                <p>{e.date}</p>
-              </div>
-            ))}
+            {this.state.eventList != null &&
+              this.state.eventList.eventCollection.toJSON().map((e, index) => (
+                <div className="card" key={index}>
+                  <h3>{e.title}</h3>
+                  <p>{e.description}</p>
+                  <p>{e.date}</p>
+                </div>
+              ))}
           </div>
+          {this.state.eventList != null && (
+            <Button
+              variant="contained"
+              onClick={() => this.state.eventList.resetArray()}
+            >
+              reset
+            </Button>
+          )}
         </div>
       </div>
     );
