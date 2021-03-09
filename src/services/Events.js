@@ -11,6 +11,8 @@ const getCalendarUid = async (name) => {
       .uid;
     if (uid) {
       return uid;
+    } else {
+      return 0;
     }
   }
 };
@@ -21,11 +23,13 @@ const getCalendarUid = async (name) => {
 
 const getEventsByDate = async (fromDate, toDate, calendarName) => {
   let uid = await getCalendarUid(calendarName);
-  let events = await axios.get(
-    `https://calendar.zoho.com/api/v1/calendars/${uid}/events`
-  );
-  if (events) {
-    return events.data;
+  if (uid != 0) {
+    let events = await axios.get(
+      `https://calendar.zoho.com/api/v1/calendars/${uid}/events`
+    );
+    if (events) {
+      console.log(events);
+    }
   }
 };
 

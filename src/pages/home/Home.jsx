@@ -3,18 +3,23 @@ import "./Home.css";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { agenda } from "./textdata";
+import { getEventsByDate } from "../../services/Events";
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      eventList: [],
+      eventList: null,
     };
   }
   componentDidMount() {
+    if (eventList == null) {
       this.setState({
-          eventList: agenda
+        eventList: agenda,
       });
+    }
+
+    getEventsByDate();
   }
   render() {
     return (

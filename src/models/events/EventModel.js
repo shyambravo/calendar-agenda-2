@@ -11,16 +11,6 @@ const Event = Backbone.Model.extend({
     },
   
 
-    setEvent: (data) => {
-        this.save({
-            tite: data.title,
-            description: data.description,
-            fromDate: data.fromDate,
-            toDate: data.toDate,
-            fromTime: data.fromTime,
-            toTime: data.toTime
-        });
-    }
   });
 
   export {Event};
