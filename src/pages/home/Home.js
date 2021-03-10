@@ -109,7 +109,7 @@ export default class Home extends Component {
                       <ul>
                         {e.attendees.map((person, index) => (
                           <li key={index}>
-                            {person.mail} - {person.status}
+                            {person.email} - {person.status}
                           </li>
                         ))}
                       </ul>
