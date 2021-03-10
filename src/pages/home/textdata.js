@@ -35,7 +35,11 @@ let agenda = {
           "etag": "1615289323066",
           "caluid": "e98d3f7e147944c0b1c73ceb9e338824",
           "multiday": false,
-          "description": "This is test demo"
+          "description": "This is test demo",
+          "attendees": [
+              {"mail": "x-man@unknown.com", "status": "pending"},
+              {"mail": "y-man@unknown.com", "status": "available"}
+          ]
       },
       {
         "reminders": [

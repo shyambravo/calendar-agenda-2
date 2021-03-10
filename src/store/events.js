@@ -19,7 +19,8 @@ class EventStore {
           organizer: data.organizer,
           fromDate: startDate,
           toDate: endDate,
-          description: data.description ? data.description : null
+          description: data.description ? data.description : null,
+          attendees: data.attendees ? data.attendees : null
         })
       );
     }

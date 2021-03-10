@@ -46,10 +46,10 @@ export default class Home extends Component {
   filterByDate = () => {
     let eventsArray = [...this.state.originList];
     eventsArray = eventsArray.filter((e) => {
-      let start = moment(this.state.fromDate).format('YYYY-MM-DD HH:mm:ss');
-      let end = moment(this.state.toDate).format('YYYY-MM-DD HH:mm:ss');
-      let startDate = moment(e.fromDate).format('YYYY-MM-DD HH:mm:ss');
-      let endDate = moment(e.toDate).format('YYYY-MM-DD HH:mm:ss');
+      let start = moment(this.state.fromDate).format("YYYY-MM-DD HH:mm:ss");
+      let end = moment(this.state.toDate).format("YYYY-MM-DD HH:mm:ss");
+      let startDate = moment(e.fromDate).format("YYYY-MM-DD HH:mm:ss");
+      let endDate = moment(e.toDate).format("YYYY-MM-DD HH:mm:ss");
       return (
         moment(startDate).isBetween(start, end) &&
         moment(endDate).isBetween(start, end)
@@ -98,6 +98,18 @@ export default class Home extends Component {
                   <p>FROM - {e.fromDate}</p>
                   <p>TO - {e.toDate}</p>
                   <p>{e.description ? e.description : ""}</p>
+                  {e.attendees && (
+                    <div className="attendees-list">
+                      <h3>Attendees List</h3>
+                      <ul>
+                        {e.attendees.map((person) => (
+                          <li>
+                            {person.mail} - {person.status}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ))}
           </div>
