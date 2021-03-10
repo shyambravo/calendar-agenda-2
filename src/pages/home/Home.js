@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import "./Home.css";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { agenda } from "./textdata";
-import { getEventsByDate } from "../../services/Events";
+import { getEvents, getAccessToken } from "../../services/Events";
 import { EventStore } from "../../store/events";
 import moment from "moment";
+import queryString from "query-string";
 
 export default class Home extends Component {
   constructor(props) {
@@ -14,20 +14,25 @@ export default class Home extends Component {
       eventList: null,
       fromDate: null,
       toDate: null,
+      urlParams: null,
+      token: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
   }
 
   async componentDidMount() {
-    let temp = new EventStore(
-      await getEventsByDate(this.state.fromDate, this.state.toDate)
-    );
+    const parsed = queryString.parse(this.props.location.search).code;
+    const token = await getAccessToken(parsed);
+    console.log(token);
+    let temp = new EventStore(await getEvents(token));
+
     this.setState({
       originList: temp.eventCollection.toJSON(),
       eventList: temp.eventCollection.toJSON(),
+      urlParams: parsed.code,
+      token: token,
     });
-    console.log(agenda.events);
   }
 
   handleChange = (type, e) => {
@@ -102,8 +107,8 @@ export default class Home extends Component {
                     <div className="attendees-list">
                       <h3>Attendees List</h3>
                       <ul>
-                        {e.attendees.map((person) => (
-                          <li>
+                        {e.attendees.map((person, index) => (
+                          <li key={index}>
                             {person.mail} - {person.status}
                           </li>
                         ))}

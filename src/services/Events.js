@@ -1,13 +1,20 @@
-import {agenda} from "../pages/home/textdata";
-
 //get Evens by calendar name and date
 
-const getEventsByDate = async (fromDate, toDate) => {
-    if(fromDate && toDate) {
-        return agenda.events;
-    } else {
-        return agenda.events;
-    }
+const getAccessToken = async (code) => {
+  let token = await fetch(
+    `${process.env.REACT_APP_BACKEND_URL}/authorization/${code}/${process.env.REACT_APP_CLIENT_ID}/${process.env.REACT_APP_CLIENT_SECRET}`
+  )
+    .then((res) => res.text());
+
+  return token;
 };
 
-export { getEventsByDate };
+const getEvents = async (token) => {
+  let result = await fetch(
+    `${process.env.REACT_APP_BACKEND_URL}/getEventList/${token}/${process.env.REACT_APP_CALENDAR_ID}`
+  ).then((res) => {console.log(res)});
+  console.log(result);
+//   return result;
+};
+
+export { getEvents, getAccessToken };
