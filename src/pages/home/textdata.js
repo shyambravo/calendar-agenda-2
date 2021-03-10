@@ -34,7 +34,8 @@ let agenda = {
           "modifiedby": "shyamsundar.rm@zohocorp.com",
           "etag": "1615289323066",
           "caluid": "e98d3f7e147944c0b1c73ceb9e338824",
-          "multiday": false
+          "multiday": false,
+          "description": "This is test demo"
       },
       {
         "reminders": [

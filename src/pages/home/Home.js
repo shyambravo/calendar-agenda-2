@@ -97,6 +97,7 @@ export default class Home extends Component {
                   <p>ORGANIZER - {e.organizer}</p>
                   <p>FROM - {e.fromDate}</p>
                   <p>TO - {e.toDate}</p>
+                  <p>{e.description ? e.description : ""}</p>
                 </div>
               ))}
           </div>

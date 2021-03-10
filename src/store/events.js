@@ -19,6 +19,7 @@ class EventStore {
           organizer: data.organizer,
           fromDate: startDate,
           toDate: endDate,
+          description: data.description ? data.description : null
         })
       );
     }
