@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import "./Home.css";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { getEvents, getAccessToken } from "../../services/Events";
+import {
+  getEvents,
+  getAccessToken,
+  getCalendarId,
+} from "../../services/Events";
 import { EventStore } from "../../store/events";
 import moment from "moment";
 import queryString from "query-string";
@@ -16,7 +20,8 @@ export default class Home extends Component {
       fromDate: null,
       toDate: null,
       token: null,
-      isLoading: true
+      isLoading: true,
+      cid: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
@@ -25,13 +30,9 @@ export default class Home extends Component {
   async componentDidMount() {
     const parsed = queryString.parse(this.props.location.search).code;
     const token = await getAccessToken(parsed);
-    console.log(token);
-    let temp = new EventStore(await getEvents(token));
     this.setState({
-      originList: temp.eventCollection.toJSON(),
-      eventList: temp.eventCollection.toJSON(),
       token: token,
-      isLoading: false
+      isLoading: false,
     });
   }
 
@@ -41,9 +42,13 @@ export default class Home extends Component {
       this.setState({
         fromDate: val,
       });
-    } else {
+    } else if (type === "end") {
       this.setState({
         toDate: val,
+      });
+    } else {
+      this.setState({
+        cid: e.target.value,
       });
     }
   };
@@ -65,12 +70,46 @@ export default class Home extends Component {
     });
   };
 
+  selectCalendar = async (e) => {
+    this.setState({
+      isLoading: true
+    })
+    let calendarId = await getCalendarId(this.state.token, this.state.cid);
+    console.log(calendarId);
+    if (calendarId === 0) {
+      alert("calendar not found");
+      this.setState({
+        originList: [],
+        eventList: [],
+        isLoading: false
+      });
+    } else {
+      let events = await getEvents(this.state.token, calendarId[0].uid);
+      if (events[0].message === "No events found.") {
+        alert("No events found");
+        this.setState({
+          originList: [],
+          eventList: [],
+          isLoading: false
+        })
+      } else {
+        let temp = new EventStore(events);
+        this.setState({
+          originList: temp.eventCollection.toJSON(),
+          eventList: temp.eventCollection.toJSON(),
+          cid: calendarId,
+          isLoading: false
+        });
+      }
+    }
+  };
+
   render() {
     return (
       <div className="home-container">
         {this.state.isLoading && (
           <div className="backdrop">
-            <CircularProgress disableShrink className="loader"/>
+            <CircularProgress disableShrink className="loader" />
           </div>
         )}
         <div className="home-header">
@@ -98,6 +137,22 @@ export default class Home extends Component {
             </Button>
           </div>
         </div>
+        <div className="calendar-name">
+          <TextField
+            label="Calendar Name"
+            variant="outlined"
+            type="text"
+            onChange={(e) => this.handleChange("name", e)}
+          />
+          <Button
+            variant="contained"
+            onClick={(e) => this.selectCalendar(e)}
+            color="primary"
+          >
+            Select
+          </Button>
+        </div>
+
         <div className="agenda-listing">
           <div className="list">
             {this.state.eventList != null &&

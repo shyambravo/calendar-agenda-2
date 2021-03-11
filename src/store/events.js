@@ -4,7 +4,6 @@ import moment from "moment";
 
 class EventStore {
   constructor(agenda) {
-    console.log(agenda);
     this.eventArray = [];
     for (let data of agenda) {
       let startDate = moment(data.dateandtime.start).format(

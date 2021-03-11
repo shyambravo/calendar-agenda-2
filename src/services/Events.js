@@ -9,12 +9,18 @@ const getAccessToken = async (code) => {
   return token;
 };
 
-const getEvents = async (token) => {
+const getEvents = async (token, cid) => {
   let result = await fetch(
-    `${process.env.REACT_APP_BACKEND_URL}/getEventList/${token}/${process.env.REACT_APP_CALENDAR_ID}`
+    `${process.env.REACT_APP_BACKEND_URL}/getEventList/${token}/${cid}`
   ).then((res) => res.json());
-  
+  console.log(result);
   return result.events;
 };
 
-export { getEvents, getAccessToken };
+const getCalendarId = async (token, name) => {
+  let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendarName/${token}/${name}`).then(res => res.json()).catch(err => 0);
+
+  return result;
+}
+
+export { getEvents, getAccessToken, getCalendarId };
