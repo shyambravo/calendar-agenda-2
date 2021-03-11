@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import "./Authorization.css";
 
 export default class Authorization extends Component {
@@ -15,8 +15,12 @@ export default class Authorization extends Component {
     return (
       <div className="Authorization-container">
         <div className="shadow-container">
+          <div className="agenda-title">
+            <h1>Welcome to Agenda Listing</h1>
+          </div>
           <Button variant="contained" onClick={this.authorize} color="primary">
-            Authorize<ArrowForwardIcon className="icon"/>
+            Authorize
+            <ArrowForwardIcon className="icon" />
           </Button>
         </div>
       </div>

@@ -15,7 +15,6 @@ export default class Home extends Component {
       eventList: null,
       fromDate: null,
       toDate: null,
-      urlParams: null,
       token: null,
       isLoading: true
     };
@@ -28,11 +27,9 @@ export default class Home extends Component {
     const token = await getAccessToken(parsed);
     console.log(token);
     let temp = new EventStore(await getEvents(token));
-
     this.setState({
       originList: temp.eventCollection.toJSON(),
       eventList: temp.eventCollection.toJSON(),
-      urlParams: parsed.code,
       token: token,
       isLoading: false
     });
