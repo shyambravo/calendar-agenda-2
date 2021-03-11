@@ -67,3 +67,21 @@
 .attendees-list li {
     margin: 2rem;
 }
+
+.backdrop {
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    opacity: 1 !important;
+}

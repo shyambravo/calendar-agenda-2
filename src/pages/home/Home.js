@@ -6,6 +6,7 @@ import { getEvents, getAccessToken } from "../../services/Events";
 import { EventStore } from "../../store/events";
 import moment from "moment";
 import queryString from "query-string";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default class Home extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class Home extends Component {
       toDate: null,
       urlParams: null,
       token: null,
+      isLoading: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
@@ -32,6 +34,7 @@ export default class Home extends Component {
       eventList: temp.eventCollection.toJSON(),
       urlParams: parsed.code,
       token: token,
+      isLoading: false
     });
   }
 
@@ -68,6 +71,11 @@ export default class Home extends Component {
   render() {
     return (
       <div className="home-container">
+        {this.state.isLoading && (
+          <div className="backdrop">
+            <CircularProgress disableShrink className="loader"/>
+          </div>
+        )}
         <div className="home-header">
           <div className="date">
             <h4>From Date</h4>
