@@ -16,7 +16,8 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      eventList: null,
+      originList: [],
+      eventList: [],
       fromDate: null,
       toDate: null,
       token: null,
