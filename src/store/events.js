@@ -1,16 +1,16 @@
-import { Event } from "../models/events/EventModel";
-import { EventList } from "../collections/events/EventCollection";
-import moment from "moment";
+import moment from 'moment';
+import Event from '../models/events/EventModel';
+import EventList from '../collections/events/EventCollection';
 
 class EventStore {
   constructor(agenda) {
     this.eventArray = [];
-    for (let data of agenda) {
-      let startDate = moment(data.dateandtime.start).format(
-        "MMMM DD YYYY, h:mm:ss a"
+    for (const data of agenda) {
+      const startDate = moment(data.dateandtime.start).format(
+        'MMMM DD YYYY, h:mm:ss a',
       );
-      let endDate = moment(data.dateandtime.end).format(
-        "MMMM DD YYYY, h:mm:ss a"
+      const endDate = moment(data.dateandtime.end).format(
+        'MMMM DD YYYY, h:mm:ss a',
       );
       this.eventArray.push(
         new Event({
@@ -19,12 +19,12 @@ class EventStore {
           fromDate: startDate,
           toDate: endDate,
           description: data.description ? data.description : null,
-          attendees: data.attendees ? data.attendees : null
-        })
+          attendees: data.attendees ? data.attendees : null,
+        }),
       );
     }
     this.eventCollection = new EventList(this.eventArray);
   }
 }
 
-export { EventStore };
+export default EventStore;

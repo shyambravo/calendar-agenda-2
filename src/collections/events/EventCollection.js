@@ -1,5 +1,5 @@
-import Backbone from "backbone";
-import { Event } from "../../models/events/EventModel";
+import Backbone from 'backbone';
+import Event from '../../models/events/EventModel';
 
 const EventList = Backbone.Collection.extend({
   // Reference to this collection's model.
@@ -7,4 +7,4 @@ const EventList = Backbone.Collection.extend({
 
 });
 
-export { EventList };
+export default EventList;

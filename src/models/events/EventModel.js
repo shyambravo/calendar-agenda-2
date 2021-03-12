@@ -1,13 +1,13 @@
 import Backbone from 'backbone';
+
 const Event = Backbone.Model.extend({
 
-    defaults: {
-        title: "",
-        description: "",
-        date: ""
-    },
-  
+  defaults: {
+    title: '',
+    description: '',
+    date: '',
+  },
 
-  });
+});
 
-  export {Event};
+export default Event;

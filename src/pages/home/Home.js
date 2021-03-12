@@ -6,7 +6,7 @@ import moment from 'moment';
 import queryString from 'query-string';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
-import { EventStore } from '../../store/events';
+import EventStore from '../../store/events';
 import {
   getEvents,
   getAccessToken,
@@ -56,6 +56,7 @@ export default class Home extends Component {
   };
 
   filterByDate = () => {
+    // eslint-disable-next-line react/no-access-state-in-setstate
     let eventsArray = [...this.state.originList];
     eventsArray = eventsArray.filter((e) => {
       const start = moment(this.state.fromDate).format('YYYY-MM-DD HH:mm:ss');
