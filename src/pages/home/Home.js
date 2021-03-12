@@ -77,23 +77,15 @@ export default class Home extends Component {
       isLoading: true,
     });
     let calendarId = await getCalendarId(this.state.token, this.state.cid);
-    console.log(calendarId);
+    let flag = true;
     if (calendarId === 0) {
       alert("calendar not found");
-      this.setState({
-        originList: [],
-        eventList: [],
-        isLoading: false,
-      });
+      flag = false;
     } else {
       let events = await getEvents(this.state.token, calendarId[0].uid);
       if (events[0].message === "No events found.") {
         alert("No events found");
-        this.setState({
-          originList: [],
-          eventList: [],
-          isLoading: false,
-        });
+        flag = false;
       } else {
         let temp = new EventStore(events);
         this.setState({
@@ -103,6 +95,13 @@ export default class Home extends Component {
           isLoading: false,
         });
       }
+    }
+    if(flag === false) {
+      this.setState({
+        originList: [],
+        eventList: [],
+        isLoading: false,
+      });
     }
   };
 
