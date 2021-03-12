@@ -11,6 +11,7 @@ import { EventStore } from "../../store/events";
 import moment from "moment";
 import queryString from "query-string";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Grid from "@material-ui/core/Grid";
 
 export default class Home extends Component {
   constructor(props) {
@@ -73,8 +74,8 @@ export default class Home extends Component {
 
   selectCalendar = async (e) => {
     this.setState({
-      isLoading: true
-    })
+      isLoading: true,
+    });
     let calendarId = await getCalendarId(this.state.token, this.state.cid);
     console.log(calendarId);
     if (calendarId === 0) {
@@ -82,7 +83,7 @@ export default class Home extends Component {
       this.setState({
         originList: [],
         eventList: [],
-        isLoading: false
+        isLoading: false,
       });
     } else {
       let events = await getEvents(this.state.token, calendarId[0].uid);
@@ -91,15 +92,15 @@ export default class Home extends Component {
         this.setState({
           originList: [],
           eventList: [],
-          isLoading: false
-        })
+          isLoading: false,
+        });
       } else {
         let temp = new EventStore(events);
         this.setState({
           originList: temp.eventCollection.toJSON(),
           eventList: temp.eventCollection.toJSON(),
           cid: calendarId,
-          isLoading: false
+          isLoading: false,
         });
       }
     }
@@ -114,70 +115,91 @@ export default class Home extends Component {
           </div>
         )}
         <div className="home-header">
-          <div className="date">
-            <h4>From Date</h4>
-            <TextField
-              variant="outlined"
-              type="date"
-              className="date-input"
-              onChange={(e) => this.handleChange("start", e)}
-            />
-          </div>
-          <div className="date">
-            <h4>To Date</h4>
-            <TextField
-              variant="outlined"
-              type="date"
-              className="date-input"
-              onChange={(e) => this.handleChange("end", e)}
-            />
-          </div>
-          <div className="date-search">
-            <Button variant="contained" onClick={this.filterByDate}>
-              Search
-            </Button>
-          </div>
+          <h3>Agenda Listing</h3>
         </div>
-        <div className="calendar-name">
-          <TextField
-            label="Calendar Name"
-            variant="outlined"
-            type="text"
-            onChange={(e) => this.handleChange("name", e)}
-          />
-          <Button
-            variant="contained"
-            onClick={(e) => this.selectCalendar(e)}
-            color="primary"
-          >
-            Select
-          </Button>
-        </div>
+        <div className="scrollable-content">
+          <div className="calendar-name">
+            <div className="calendar-grid">
+              <Grid container spacing={3} alignItems="center">
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    label="Calendar Name"
+                    variant="outlined"
+                    type="text"
+                    onChange={(e) => this.handleChange("name", e)}
+                    className="calendar-input"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Button
+                    variant="contained"
+                    onClick={(e) => this.selectCalendar(e)}
+                    color="primary"
+                    className="calendar-input"
+                  >
+                    Select
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid container spacing={3} alignItems="center" className="grid">
+                <Grid item xs={12} sm={3} justify="center">
+                  <TextField
+                    label="From Date"
+                    variant="outlined"
+                    type="date"
+                    onChange={(e) => this.handleChange("start", e)}
+                    InputLabelProps={{ shrink: true }}
+                    className="calendar-input"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    label="To Date"
+                    variant="outlined"
+                    type="date"
+                    onChange={(e) => this.handleChange("end", e)}
+                    InputLabelProps={{ shrink: true }}
+                    className="calendar-input"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Button
+                    variant="contained"
+                    onClick={this.filterByDate}
+                    className="calendar-input"
+                  >
+                    Search
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          </div>
 
-        <div className="agenda-listing">
-          <div className="list">
-            {this.state.eventList != null &&
-              this.state.eventList.map((e, index) => (
-                <div className="card" key={index}>
-                  <h3>{e.title}</h3>
-                  <p>ORGANIZER - {e.organizer}</p>
-                  <p>FROM - {e.fromDate}</p>
-                  <p>TO - {e.toDate}</p>
-                  <p>{e.description ? e.description : ""}</p>
-                  {e.attendees && (
-                    <div className="attendees-list">
-                      <h3>Attendees List</h3>
-                      <ul>
-                        {e.attendees.map((person, index) => (
-                          <li key={index}>
-                            {person.email} - {person.status}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ))}
+          <div className="agenda-listing">
+            <div className="list">
+              {this.state.eventList != null &&
+                this.state.eventList.map((e, index) => (
+                  <div className="card" key={index}>
+                    <h3>{e.title}</h3>
+                    <p>ORGANIZER - {e.organizer}</p>
+                    <p>FROM - {e.fromDate}</p>
+                    <p>TO - {e.toDate}</p>
+                    <p>{e.description ? e.description : ""}</p>
+                    {e.attendees && (
+                      <div className="attendees-list">
+                        <h3>Attendees List</h3>
+                        <ul>
+                          {e.attendees.map((person, index) => (
+                            <li key={index}>
+                              {person.email} - {person.status}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>
