@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import "./Home.css";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import React, { Component } from 'react';
+import './Home.css';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import moment from 'moment';
+import queryString from 'query-string';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Grid from '@material-ui/core/Grid';
+import { EventStore } from '../../store/events';
 import {
   getEvents,
   getAccessToken,
   getCalendarId,
-} from "../../services/Events";
-import { EventStore } from "../../store/events";
-import moment from "moment";
-import queryString from "query-string";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Grid from "@material-ui/core/Grid";
+} from '../../services/Events';
 
 export default class Home extends Component {
   constructor(props) {
@@ -33,18 +33,18 @@ export default class Home extends Component {
     const parsed = queryString.parse(this.props.location.search).code;
     const token = await getAccessToken(parsed);
     this.setState({
-      token: token,
+      token,
       isLoading: false,
     });
   }
 
   handleChange = (type, e) => {
-    let val = e.target.value;
-    if (type === "start") {
+    const val = e.target.value;
+    if (type === 'start') {
       this.setState({
         fromDate: val,
       });
-    } else if (type === "end") {
+    } else if (type === 'end') {
       this.setState({
         toDate: val,
       });
@@ -58,13 +58,13 @@ export default class Home extends Component {
   filterByDate = () => {
     let eventsArray = [...this.state.originList];
     eventsArray = eventsArray.filter((e) => {
-      let start = moment(this.state.fromDate).format("YYYY-MM-DD HH:mm:ss");
-      let end = moment(this.state.toDate).format("YYYY-MM-DD HH:mm:ss");
-      let startDate = moment(e.fromDate).format("YYYY-MM-DD HH:mm:ss");
-      let endDate = moment(e.toDate).format("YYYY-MM-DD HH:mm:ss");
+      const start = moment(this.state.fromDate).format('YYYY-MM-DD HH:mm:ss');
+      const end = moment(this.state.toDate).format('YYYY-MM-DD HH:mm:ss');
+      const startDate = moment(e.fromDate).format('YYYY-MM-DD HH:mm:ss');
+      const endDate = moment(e.toDate).format('YYYY-MM-DD HH:mm:ss');
       return (
-        moment(startDate).isBetween(start, end) &&
-        moment(endDate).isBetween(start, end)
+        moment(startDate).isBetween(start, end)
+        && moment(endDate).isBetween(start, end)
       );
     });
     this.setState({
@@ -72,22 +72,22 @@ export default class Home extends Component {
     });
   };
 
-  selectCalendar = async (e) => {
+  selectCalendar = async () => {
     this.setState({
       isLoading: true,
     });
-    let calendarId = await getCalendarId(this.state.token, this.state.cid);
+    const calendarId = await getCalendarId(this.state.token, this.state.cid);
     let flag = true;
     if (calendarId === 0) {
-      alert("calendar not found");
+      alert('calendar not found');
       flag = false;
     } else {
-      let events = await getEvents(this.state.token, calendarId[0].uid);
-      if (events[0].message === "No events found.") {
-        alert("No events found");
+      const events = await getEvents(this.state.token, calendarId[0].uid);
+      if (events[0].message === 'No events found.') {
+        alert('No events found');
         flag = false;
       } else {
-        let temp = new EventStore(events);
+        const temp = new EventStore(events);
         this.setState({
           originList: temp.eventCollection.toJSON(),
           eventList: temp.eventCollection.toJSON(),
@@ -96,7 +96,7 @@ export default class Home extends Component {
         });
       }
     }
-    if(flag === false) {
+    if (flag === false) {
       this.setState({
         originList: [],
         eventList: [],
@@ -125,7 +125,7 @@ export default class Home extends Component {
                     label="Calendar Name"
                     variant="outlined"
                     type="text"
-                    onChange={(e) => this.handleChange("name", e)}
+                    onChange={(e) => this.handleChange('name', e)}
                     className="calendar-input"
                   />
                 </Grid>
@@ -146,7 +146,7 @@ export default class Home extends Component {
                     label="From Date"
                     variant="outlined"
                     type="date"
-                    onChange={(e) => this.handleChange("start", e)}
+                    onChange={(e) => this.handleChange('start', e)}
                     InputLabelProps={{ shrink: true }}
                     className="calendar-input"
                   />
@@ -156,7 +156,7 @@ export default class Home extends Component {
                     label="To Date"
                     variant="outlined"
                     type="date"
-                    onChange={(e) => this.handleChange("end", e)}
+                    onChange={(e) => this.handleChange('end', e)}
                     InputLabelProps={{ shrink: true }}
                     className="calendar-input"
                   />
@@ -176,21 +176,33 @@ export default class Home extends Component {
 
           <div className="agenda-listing">
             <div className="list">
-              {this.state.eventList != null &&
-                this.state.eventList.map((e, index) => (
-                  <div className="card" key={index}>
+              {this.state.eventList != null
+                && this.state.eventList.map((e) => (
+                  <div className="card" key={e.title}>
                     <h3>{e.title}</h3>
-                    <p>ORGANIZER - {e.organizer}</p>
-                    <p>FROM - {e.fromDate}</p>
-                    <p>TO - {e.toDate}</p>
-                    <p>{e.description ? e.description : ""}</p>
+                    <p>
+                      ORGANIZER -
+                      {e.organizer}
+                    </p>
+                    <p>
+                      FROM -
+                      {e.fromDate}
+                    </p>
+                    <p>
+                      TO -
+                      {e.toDate}
+                    </p>
+                    <p>{e.description ? e.description : ''}</p>
                     {e.attendees && (
                       <div className="attendees-list">
                         <h3>Attendees List</h3>
                         <ul>
-                          {e.attendees.map((person, index) => (
-                            <li key={index}>
-                              {person.email} - {person.status}
+                          {e.attendees.map((person) => (
+                            <li key={person.email}>
+                              {person.email}
+                              {' '}
+                              -
+                              {person.status}
                             </li>
                           ))}
                         </ul>
