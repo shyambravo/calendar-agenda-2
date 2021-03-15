@@ -30,7 +30,8 @@ export default class Home extends Component {
   }
 
   async componentDidMount() {
-    const parsed = queryString.parse(this.props.location.search).code;
+    const { location } = this.props;
+    const parsed = queryString.parse(location.search).code;
     const token = await getAccessToken(parsed);
     this.setState({
       token,
@@ -57,10 +58,11 @@ export default class Home extends Component {
 
   filterByDate = () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
-    let eventsArray = [...this.state.originList];
+    const { originList, fromDate, toDate } = this.state;
+    let eventsArray = [...originList];
     eventsArray = eventsArray.filter((e) => {
-      const start = moment(this.state.fromDate).format('YYYY-MM-DD HH:mm:ss');
-      const end = moment(this.state.toDate).format('YYYY-MM-DD HH:mm:ss');
+      const start = moment(fromDate).format('YYYY-MM-DD HH:mm:ss');
+      const end = moment(toDate).format('YYYY-MM-DD HH:mm:ss');
       const startDate = moment(e.fromDate).format('YYYY-MM-DD HH:mm:ss');
       const endDate = moment(e.toDate).format('YYYY-MM-DD HH:mm:ss');
       return (
@@ -77,13 +79,14 @@ export default class Home extends Component {
     this.setState({
       isLoading: true,
     });
-    const calendarId = await getCalendarId(this.state.token, this.state.cid);
+    const { token, cid } = this.state;
+    const calendarId = await getCalendarId(token, cid);
     let flag = true;
     if (calendarId === 0) {
       alert('calendar not found');
       flag = false;
     } else {
-      const events = await getEvents(this.state.token, calendarId[0].uid);
+      const events = await getEvents(token, calendarId[0].uid);
       if (events[0].message === 'No events found.') {
         alert('No events found');
         flag = false;
@@ -107,9 +110,10 @@ export default class Home extends Component {
   };
 
   render() {
+    const { isLoading, eventList } = this.state;
     return (
       <div className="home-container">
-        {this.state.isLoading && (
+        {isLoading && (
           <div className="backdrop">
             <CircularProgress disableShrink className="loader" />
           </div>
@@ -177,8 +181,8 @@ export default class Home extends Component {
 
           <div className="agenda-listing">
             <div className="list">
-              {this.state.eventList != null
-                && this.state.eventList.map((e) => (
+              {eventList != null
+                && eventList.map((e) => (
                   <div className="card" key={e.title}>
                     <h3>{e.title}</h3>
                     <p>
