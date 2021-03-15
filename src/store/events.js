@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import moment from 'moment';
 import Event from '../models/events/EventModel';
 import EventList from '../collections/events/EventCollection';
