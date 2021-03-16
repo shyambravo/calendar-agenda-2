@@ -14,5 +14,6 @@
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "no-alert": "off",
         "react/prop-types": "off"
-    }
+    },
+    "ignorePatterns": ["./temp/bunde.js"]
 }
