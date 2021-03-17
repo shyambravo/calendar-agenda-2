@@ -74,6 +74,7 @@ export default class Home extends Component {
       if (result === false) {
         alert('No Events found.');
       } else {
+        console.log(eventStore.eventCollection.toJSON());
         this.setState({
           eventList: eventStore.eventCollection.toJSON(),
           isLoading: false,
@@ -193,8 +194,9 @@ export default class Home extends Component {
           <div className="agenda-listing">
             <div className="list">
               {eventList != null
-                && eventList.map((e) => (
-                  <div className="card" key={Math.random()}>
+                && eventList.map((e, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <div className="card" key={index}>
                     <h3>{e.title}</h3>
                     <p>
                       ORGANIZER -
