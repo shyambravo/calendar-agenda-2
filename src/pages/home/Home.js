@@ -74,7 +74,6 @@ export default class Home extends Component {
       if (result === false) {
         alert('No Events found.');
       } else {
-        console.log(eventStore.eventCollection.toJSON());
         this.setState({
           eventList: eventStore.eventCollection.toJSON(),
           isLoading: false,
