@@ -109,6 +109,7 @@ dist
 /node_modules
 /.pnp
 .pnp.js
+/temp/bundle.js
 
 # testing
 /coverage
