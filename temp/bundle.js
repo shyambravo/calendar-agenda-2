@@ -524,39 +524,6 @@
 	}
 	});
 
-	function styleInject(css, ref) {
-	  if ( ref === void 0 ) ref = {};
-	  var insertAt = ref.insertAt;
-
-	  if (!css || typeof document === 'undefined') { return; }
-
-	  var head = document.head || document.getElementsByTagName('head')[0];
-	  var style = document.createElement('style');
-	  style.type = 'text/css';
-
-	  if (insertAt === 'top') {
-	    if (head.firstChild) {
-	      head.insertBefore(style, head.firstChild);
-	    } else {
-	      head.appendChild(style);
-	    }
-	  } else {
-	    head.appendChild(style);
-	  }
-
-	  if (style.styleSheet) {
-	    style.styleSheet.cssText = css;
-	  } else {
-	    style.appendChild(document.createTextNode(css));
-	  }
-	}
-
-	var css_248z$3 = "body {\n  margin: 0;\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',\n    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',\n    sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\ncode {\n  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',\n    monospace;\n}\n";
-	styleInject(css_248z$3);
-
-	var css_248z$2 = "\n";
-	styleInject(css_248z$2);
-
 	function _setPrototypeOf(o, p) {
 	  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
 	    o.__proto__ = p;
@@ -4151,9 +4118,6 @@
 	});
 
 	var _defineProperty$1 = /*@__PURE__*/getDefaultExportFromCjs(defineProperty);
-
-	var css_248z$1 = ".home-container {\n    max-width: 800px;\n    margin: 0 auto;\n    height: 100vh;\n    overflow: hidden;\n    background-color: #f5f5f5;\n}\n.home-header {\n    height: 50px;\n    background-color: rgb(26,112,197);\n    display: flex;\n    padding: 10px;\n    color: white;\n}\n.scrollable-content {\n    overflow: auto;\n    height: calc(100vh - 80px);\n}\n.date {\n    margin: 0 10px;\n}\n\n.date input {\n    color: white;\n}\n\n.date h4 {\n    margin: 5px 0;\n}\n\n.date-search {\n    margin: 15px 10px 0 10px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n.agenda-listing {\n    display: flex;\n    justify-content: center;\n}\n\n.list {\n    width: 100%;\n    display: grid;\n    grid-template-columns: auto;\n    justify-content: center;\n}\n\n.card {\n    background-color: #fff;\n    max-width: 500px;\n    text-align: center;\n    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);\n    padding: 5px;\n    margin: 15px;\n}\n\n.attendees-list {\n    margin: 5px;\n    list-style: none;\n    border: 1px solid black;\n}\n\n.attendees-list ul{\n    list-style: none;\n    padding: 0;\n}\n\n.attendees-list li {\n    margin: 2rem;\n}\n\n.backdrop {\n    z-index: 100;\n    width: 100vw;\n    height: 100vh;\n    background-color: #fff;\n    position: absolute;\n    top: 0;\n    left: 0;\n    opacity: 0.5;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n.loader {\n    opacity: 1 !important;\n}\n\n.calendar-name {\n   background-color: #fff;\n}\n\n.calendar-grid {\n    margin: 20px;\n}\n\n\n\n.calendar-input {\n   width: 100%;\n}\n\n.grid{\n    margin-top: 10px !important;\n}";
-	styleInject(css_248z$1);
 
 	function _objectWithoutProperties(source, excluded) {
 	  if (source == null) return {};
@@ -37687,9 +37651,6 @@
 	});
 
 	var ArrowForwardIcon = /*@__PURE__*/getDefaultExportFromCjs(ArrowForward);
-
-	var css_248z = ".Authorization-container {\n    max-width: 100vw;\n    height: 100vh;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n\n.icon {\n    margin-left: 10px;\n}\n\n.shadow-container {\n    text-align: center;\n}";
-	styleInject(css_248z);
 
 	function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 

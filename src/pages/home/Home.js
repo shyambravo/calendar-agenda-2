@@ -17,13 +17,13 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      originList: [],
       eventList: [],
       fromDate: null,
       toDate: null,
       token: null,
       isLoading: true,
       cid: null,
+      eventStore: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
@@ -56,22 +56,34 @@ export default class Home extends Component {
     }
   };
 
-  filterByDate = () => {
+  filterByDate = async () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
-    const { originList, fromDate, toDate } = this.state;
-    let eventsArray = [...originList];
-    eventsArray = eventsArray.filter((e) => {
-      const start = moment(fromDate).format('YYYY-MM-DD HH:mm:ss');
-      const end = moment(toDate).format('YYYY-MM-DD HH:mm:ss');
-      const startDate = moment(e.fromDate).format('YYYY-MM-DD HH:mm:ss');
-      const endDate = moment(e.toDate).format('YYYY-MM-DD HH:mm:ss');
-      return (
-        moment(startDate).isBetween(start, end)
-        && moment(endDate).isBetween(start, end)
-      );
-    });
+    const {
+      eventStore, fromDate, toDate, cid, token,
+    } = this.state;
+    const start = moment(fromDate).format('YYYYMMDD');
+    const end = moment(toDate).format('YYYYMMDD');
+    const a = moment(start);
+    const b = moment(end);
+    if (cid && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+      this.setState({
+        isLoading: true,
+        eventList: null,
+      });
+      const result = await eventStore.updateEvents(start, end, cid, token);
+      if (result === false) {
+        alert('No Events found.');
+      } else {
+        this.setState({
+          eventList: eventStore.eventCollection.toJSON(),
+          isLoading: false,
+        });
+      }
+    } else {
+      alert('No calendar is selected or improper date');
+    }
     this.setState({
-      eventList: eventsArray,
+      isLoading: false,
     });
   };
 
@@ -86,23 +98,22 @@ export default class Home extends Component {
       alert('calendar not found');
       flag = false;
     } else {
-      const events = await getEvents(token, calendarId[0].uid);
+      const events = await getEvents(token, calendarId[0].uid, null, null);
       if (events[0].message === 'No events found.') {
         alert('No events found');
         flag = false;
       } else {
         const temp = new EventStore(events);
         this.setState({
-          originList: temp.eventCollection.toJSON(),
           eventList: temp.eventCollection.toJSON(),
-          cid: calendarId,
+          cid: calendarId[0].uid,
           isLoading: false,
+          eventStore: temp,
         });
       }
     }
     if (flag === false) {
       this.setState({
-        originList: [],
         eventList: [],
         isLoading: false,
       });
@@ -146,7 +157,7 @@ export default class Home extends Component {
                 </Grid>
               </Grid>
               <Grid container spacing={3} alignItems="center" className="grid">
-                <Grid item xs={12} sm={3} justify="center">
+                <Grid item xs={12} sm={3}>
                   <TextField
                     label="From Date"
                     variant="outlined"
@@ -183,7 +194,7 @@ export default class Home extends Component {
             <div className="list">
               {eventList != null
                 && eventList.map((e) => (
-                  <div className="card" key={e.title}>
+                  <div className="card" key={Math.random()}>
                     <h3>{e.title}</h3>
                     <p>
                       ORGANIZER -

@@ -3,8 +3,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import external from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import resolve from '@rollup/plugin-node-resolve';
-import image from '@rollup/plugin-image';
-import visualizer from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
 
 import serve from 'rollup-plugin-serve';
@@ -14,7 +12,7 @@ export default {
   input: './src/index.js',
   output: [
     {
-      file: 'temp/bunde.js',
+      file: 'temp/bundle.js',
       format: 'iife',
     },
   ],
@@ -35,7 +33,9 @@ export default {
       'process.env.REACT_APP_BACKEND_URL': JSON.stringify('http://localhost:5000'),
     }),
     external(),
-    postcss(),
+    postcss({
+      extract: 'bundle.css',
+    }),
     babel({
       exclude: 'node_modules/**',
       presets: ['@babel/preset-react'],
@@ -43,7 +43,5 @@ export default {
     }),
     resolve(),
     commonjs(),
-    image(),
-    visualizer(),
   ],
 };

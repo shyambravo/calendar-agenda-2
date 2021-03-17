@@ -2,6 +2,7 @@
 import moment from 'moment';
 import Event from '../models/events/EventModel';
 import EventList from '../collections/events/EventCollection';
+import { getEvents } from '../services/Events';
 
 class EventStore {
   constructor(agenda) {
@@ -26,6 +27,34 @@ class EventStore {
     }
     this.eventCollection = new EventList(this.eventArray);
   }
+
+  updateEvents = async (fromDate, toDate, cid, token) => {
+    const eventArray = await getEvents(token, cid, fromDate, toDate);
+    this.eventArray = [];
+    if (eventArray.length > 0 && eventArray[0].message !== 'No events found.') {
+      for (const data of eventArray) {
+        const startDate = moment(data.dateandtime.start).format(
+          'MMMM DD YYYY, h:mm:ss a',
+        );
+        const endDate = moment(data.dateandtime.end).format(
+          'MMMM DD YYYY, h:mm:ss a',
+        );
+        this.eventArray.push(
+          new Event({
+            title: data.title,
+            organizer: data.organizer,
+            fromDate: startDate,
+            toDate: endDate,
+            description: data.description ? data.description : null,
+            attendees: data.attendees ? data.attendees : null,
+          }),
+        );
+      }
+      this.eventCollection = new EventList(this.eventArray);
+      return true;
+    }
+    return false;
+  };
 }
 
 export default EventStore;

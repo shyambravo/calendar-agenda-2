@@ -12,6 +12,7 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.1",
     "axios": "^0.21.1",
+    "babel-preset-env": "^1.7.0",
     "backbone": "^1.4.0",
     "connect-backbone-to-react": "^3.0.0",
     "dotenv": "^8.2.0",
