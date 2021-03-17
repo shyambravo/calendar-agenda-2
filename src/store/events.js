@@ -30,7 +30,7 @@ class EventStore {
 
   updateEvents = async (fromDate, toDate, cid, token) => {
     const eventArray = await getEvents(token, cid, fromDate, toDate);
-    this.eventArray = [];
+    this.eventCollection.reset();
     if (eventArray.length > 0 && eventArray[0].message !== 'No events found.') {
       for (const data of eventArray) {
         const startDate = moment(data.dateandtime.start).format(
@@ -39,7 +39,7 @@ class EventStore {
         const endDate = moment(data.dateandtime.end).format(
           'MMMM DD YYYY, h:mm:ss a',
         );
-        this.eventArray.push(
+        this.eventCollection.add(
           new Event({
             title: data.title,
             organizer: data.organizer,
@@ -50,7 +50,6 @@ class EventStore {
           }),
         );
       }
-      this.eventCollection = new EventList(this.eventArray);
       return true;
     }
     return false;
