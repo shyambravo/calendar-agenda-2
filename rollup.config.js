@@ -12,7 +12,7 @@ export default {
   input: './src/index.js',
   output: [
     {
-      file: 'temp/bundle.js',
+      file: '.bin/app.min.js',
       format: 'iife',
     },
   ],
@@ -20,12 +20,12 @@ export default {
     serve({
       open: true,
       verbose: true,
-      contentBase: ['', 'temp'],
+      contentBase: ['', 'html'],
       historyApiFallback: true,
       host: 'localhost',
       port: 3000,
     }),
-    livereload({ watch: 'temp' }),
+    livereload({ watch: '.bin' }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
       'process.env.REACT_APP_CLIENT_ID': JSON.stringify('1000.43FVHMOQJN51X41OMHWCCISWC8E2KQ'),
@@ -34,11 +34,11 @@ export default {
     }),
     external(),
     postcss({
-      extract: 'bundle.css',
+      extract: 'app.min.css',
     }),
     babel({
       exclude: 'node_modules/**',
-      presets: ['@babel/preset-react'],
+      presets: ['@babel/preset-env', '@babel/preset-react'],
       runtimeHelpers: true,
     }),
     resolve(),
