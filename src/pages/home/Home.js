@@ -22,11 +22,11 @@ export default class Home extends Component {
     this.state = {
       calendarList: [],
       eventList: [],
-      fromDate: null,
-      toDate: null,
+      fromDate: moment().format('YYYY-MM-DD'),
+      toDate: moment().format('YYYY-MM-DD'),
       token: null,
       isLoading: true,
-      cid: 0,
+      cid: '0',
       eventStore: null,
     };
     this.handleChange = this.handleChange.bind(this);
@@ -43,11 +43,8 @@ export default class Home extends Component {
       token,
     });
     const result = await getCalendars(token);
-    const date = (moment().format('YYYY-MM-DD'));
     this.setState({
       calendarList: [],
-      fromDate: date,
-      toDate: date,
       isLoading: false,
     });
     if (result.calendars.length > 0) {
@@ -84,7 +81,7 @@ export default class Home extends Component {
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    if (cid !== 0 && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+    if (cid !== '0' && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
       this.setState({
         isLoading: true,
         eventList: null,
@@ -118,27 +115,28 @@ export default class Home extends Component {
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    if (cid && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+    if (cid !== '0' && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
       const events = await getEvents(token, calendarId, start, end);
       if (events[0].message === 'No events found.') {
         alert('No events found');
         const temp = new EventStore([]);
         this.setState({
           eventList: temp.eventCollection.toJSON(),
-          isLoading: false,
           eventStore: temp,
         });
       } else {
         const temp = new EventStore(events);
         this.setState({
           eventList: temp.eventCollection.toJSON(),
-          isLoading: false,
           eventStore: temp,
         });
       }
     } else {
-      alert('Error');
+      alert('No calendar selected');
     }
+    this.setState({
+      isLoading: false,
+    });
   };
 
   render() {
