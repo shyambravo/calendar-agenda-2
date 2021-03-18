@@ -1,6 +1,5 @@
 .home-container {
-    max-width: 800px;
-    margin: 0 auto;
+
     height: 100vh;
     overflow: hidden;
     background-color: #f5f5f5;
@@ -13,7 +12,7 @@
     color: white;
 }
 .scrollable-content {
-    overflow: auto;
+    overflow-y: auto;
     height: calc(100vh - 80px);
 }
 .date {
@@ -94,13 +93,16 @@
 }
 
 .calendar-grid {
-    margin: 20px;
+    overflow: hidden;
+}
+
+.calendar-grid-container {
+    padding: 20px;
 }
 
 
-
 .calendar-input {
-   width: 100%;
+    width: 100%;
 }
 
 .grid{

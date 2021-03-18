@@ -1,32 +1,38 @@
 import React, { Component } from 'react';
 import './Home.css';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import queryString from 'query-string';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { FormControl, InputLabel } from '@material-ui/core';
 import EventStore from '../../store/events';
+
 import {
   getEvents,
   getAccessToken,
-  getCalendarId,
+  getCalendars,
 } from '../../services/Events';
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      calendarList: [],
       eventList: [],
       fromDate: null,
       toDate: null,
       token: null,
       isLoading: true,
-      cid: null,
+      cid: 0,
       eventStore: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
+    this.handleFromDate = this.handleFromDate.bind(this);
+    this.handleToDate = this.handleToDate.bind(this);
   }
 
   async componentDidMount() {
@@ -35,26 +41,39 @@ export default class Home extends Component {
     const token = await getAccessToken(parsed);
     this.setState({
       token,
+    });
+    const result = await getCalendars(token);
+    const date = (moment().format('YYYY-MM-DD'));
+    this.setState({
+      calendarList: [],
+      fromDate: date,
+      toDate: date,
       isLoading: false,
     });
-  }
-
-  handleChange = (type, e) => {
-    const val = e.target.value;
-    if (type === 'start') {
+    if (result.calendars.length > 0) {
       this.setState({
-        fromDate: val,
-      });
-    } else if (type === 'end') {
-      this.setState({
-        toDate: val,
-      });
-    } else {
-      this.setState({
-        cid: e.target.value,
+        calendarList: result.calendars,
       });
     }
+  }
+
+  handleChange = (e) => {
+    this.setState({
+      cid: e.target.value,
+    }, () => this.selectCalendar());
   };
+
+  handleFromDate = (e) => {
+    this.setState({
+      fromDate: e.target.value,
+    }, () => this.filterByDate());
+  }
+
+  handleToDate = (e) => {
+    this.setState({
+      toDate: e.target.value,
+    }, () => this.filterByDate());
+  }
 
   filterByDate = async () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
@@ -65,7 +84,7 @@ export default class Home extends Component {
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    if (cid && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+    if (cid !== 0 && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
       this.setState({
         isLoading: true,
         eventList: null,
@@ -91,37 +110,41 @@ export default class Home extends Component {
     this.setState({
       isLoading: true,
     });
-    const { token, cid } = this.state;
-    const calendarId = await getCalendarId(token, cid);
-    let flag = true;
-    if (calendarId === 0) {
-      alert('calendar not found');
-      flag = false;
-    } else {
-      const events = await getEvents(token, calendarId[0].uid, null, null);
+    const {
+      token, cid, fromDate, toDate,
+    } = this.state;
+    const calendarId = cid;
+    const start = moment(fromDate).format('YYYYMMDD');
+    const end = moment(toDate).format('YYYYMMDD');
+    const a = moment(start);
+    const b = moment(end);
+    if (cid && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+      const events = await getEvents(token, calendarId, start, end);
       if (events[0].message === 'No events found.') {
         alert('No events found');
-        flag = false;
+        const temp = new EventStore([]);
+        this.setState({
+          eventList: temp.eventCollection.toJSON(),
+          isLoading: false,
+          eventStore: temp,
+        });
       } else {
         const temp = new EventStore(events);
         this.setState({
           eventList: temp.eventCollection.toJSON(),
-          cid: calendarId[0].uid,
           isLoading: false,
           eventStore: temp,
         });
       }
-    }
-    if (flag === false) {
-      this.setState({
-        eventList: [],
-        isLoading: false,
-      });
+    } else {
+      alert('Error');
     }
   };
 
   render() {
-    const { isLoading, eventList } = this.state;
+    const {
+      isLoading, eventList, cid, calendarList, fromDate, toDate,
+    } = this.state;
     return (
       <div className="home-container">
         {isLoading && (
@@ -135,57 +158,57 @@ export default class Home extends Component {
         <div className="scrollable-content">
           <div className="calendar-name">
             <div className="calendar-grid">
-              <Grid container spacing={3} alignItems="center">
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    label="Calendar Name"
-                    variant="outlined"
-                    type="text"
-                    onChange={(e) => this.handleChange('name', e)}
-                    className="calendar-input"
-                  />
+              <Grid container alignItems="center" justify="space-between" className="calendar-grid-container" spacing={3}>
+                <Grid item xs={12} sm={6} lg={4}>
+                  <Grid item xs={12} sm={6} md={6}>
+                    <FormControl className="calendar-input">
+                      <InputLabel shrink id="calendar-name">
+                        Caledar Name
+                      </InputLabel>
+                      <Select
+                        labelId="calendar-name"
+                        value={cid}
+                        onChange={this.handleChange}
+                      >
+                        <MenuItem value="0">Select Calendar</MenuItem>
+                        {calendarList.map((e) => (
+                          <MenuItem value={e.uid} key={e.uid}>{e.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+
+                  </Grid>
+                  <Grid item />
+
                 </Grid>
-                <Grid item xs={12} sm={3}>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => this.selectCalendar(e)}
-                    color="primary"
-                    className="calendar-input"
-                  >
-                    Select
-                  </Button>
+                <Grid item xs={12} sm={6} lg={4} container>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="From Date"
+                        variant="outlined"
+                        type="date"
+                        value={fromDate}
+                        onChange={this.handleFromDate}
+                        InputLabelProps={{ shrink: true }}
+                        className="calendar-input"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="To Date"
+                        variant="outlined"
+                        type="date"
+                        value={toDate}
+                        onChange={this.handleToDate}
+                        InputLabelProps={{ shrink: true }}
+                        className="calendar-input"
+                      />
+                    </Grid>
+                  </Grid>
+
                 </Grid>
-              </Grid>
-              <Grid container spacing={3} alignItems="center" className="grid">
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    label="From Date"
-                    variant="outlined"
-                    type="date"
-                    onChange={(e) => this.handleChange('start', e)}
-                    InputLabelProps={{ shrink: true }}
-                    className="calendar-input"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    label="To Date"
-                    variant="outlined"
-                    type="date"
-                    onChange={(e) => this.handleChange('end', e)}
-                    InputLabelProps={{ shrink: true }}
-                    className="calendar-input"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <Button
-                    variant="contained"
-                    onClick={this.filterByDate}
-                    className="calendar-input"
-                  >
-                    Search
-                  </Button>
-                </Grid>
+
               </Grid>
             </div>
           </div>

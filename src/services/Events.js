@@ -42,4 +42,11 @@ const getCalendarId = async (token, name) => {
   return result;
 };
 
-export { getEvents, getAccessToken, getCalendarId };
+const getCalendars = async (token) => {
+  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendars/${token}`).then((res) => res.json()).catch(() => 0);
+  return result;
+};
+
+export {
+  getEvents, getAccessToken, getCalendarId, getCalendars,
+};
