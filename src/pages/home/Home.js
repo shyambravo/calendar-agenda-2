@@ -8,14 +8,11 @@ import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { FormControl, InputLabel } from '@material-ui/core';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import PersonIcon from '@material-ui/icons/Person';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import PeopleIcon from '@material-ui/icons/People';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import EventStore from '../../store/events';
+import MonthView from './MonthView';
+import DayView from './DayView';
 
 import { getEvents, getAccessToken, getCalendars } from '../../services/Events';
 
@@ -31,11 +28,13 @@ export default class Home extends Component {
       isLoading: true,
       cid: '0',
       eventStore: null,
+      page: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
     this.handleFromDate = this.handleFromDate.bind(this);
     this.handleToDate = this.handleToDate.bind(this);
+    this.handlePageClick = this.handlePageClick.bind(this);
   }
 
   async componentDidMount() {
@@ -163,6 +162,12 @@ export default class Home extends Component {
     });
   };
 
+  handlePageClick = (event, newValue) => {
+    this.setState({
+      page: newValue,
+    });
+  };
+
   render() {
     const {
       isLoading,
@@ -171,6 +176,7 @@ export default class Home extends Component {
       calendarList,
       fromDate,
       toDate,
+      page,
     } = this.state;
     return (
       <div className="home-container">
@@ -243,56 +249,21 @@ export default class Home extends Component {
               </Grid>
             </div>
           </div>
-
-          <div className="agenda-listing">
-            <div className="list">
-              {eventList != null
-                && eventList.map((e, index) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Card className="card" key={index}>
-                    <CardContent>
-                      <Typography>
-                        <h3>{e.title}</h3>
-                      </Typography>
-                      <Typography className="card-content">
-                        <PersonIcon />
-                        <p>
-                          ORGANIZER -
-                          {e.organizer}
-                        </p>
-                      </Typography>
-                      <Typography className="card-content">
-                        <DateRangeIcon />
-                        <p>
-                          {e.fromDate}
-                          {' - '}
-                          {e.toDate}
-                        </p>
-                      </Typography>
-                      {e.attendees && (
-                        <Typography className="card-content">
-                          <PeopleIcon />
-                          <p>
-                            Total Participant :
-                            {e.attendees.length}
-                          </p>
-                        </Typography>
-                      )}
-                      {e.location && (
-                        <Typography className="card-content">
-                          <LocationOnIcon />
-                          <p>{e.location}</p>
-                        </Typography>
-                      )}
-                      {e.description && (
-                        <Typography className="card-content">
-                          <p>{e.description ? e.description : ''}</p>
-                        </Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
+          <div>
+            <div className="app-bar">
+              <Tabs
+                value={page}
+                onChange={this.handlePageClick}
+                variant="fullWidth"
+              >
+                <Tab label="Month View" />
+                <Tab label="Day View" />
+              </Tabs>
             </div>
+            {
+              page === 0 ? <MonthView eventList={eventList} /> : <DayView />
+            }
+
           </div>
         </div>
       </div>
