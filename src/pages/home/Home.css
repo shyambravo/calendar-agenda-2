@@ -127,3 +127,56 @@
 .grid{
     margin-top: 10px !important;
 }
+
+.day-container {
+    max-width: 1000px;   
+    margin: 0 auto; 
+}
+
+.day-grid {
+    display: grid;
+    grid-template-columns: 100%;
+    justify-content: center;
+    grid-template-rows: repeat(24, 165px);
+    align-items: center;
+}
+
+.hour-div {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #2b292941;
+}
+
+.side-panel {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #2b292941;
+}
+
+.minutes-div {
+    display: grid;
+    grid-template-columns: auto;
+    justify-content: flex-start;
+    padding: 0 20px;
+}
+
+.minutes-div p {
+    margin: 10px 0;
+}
+
+.events-div {
+    width: 100%;
+    display: flex;
+}
+
+.hide-class {
+    display: none;
+}
+
+.active-class {
+    display: unset;
+}

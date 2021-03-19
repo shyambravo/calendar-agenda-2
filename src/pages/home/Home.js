@@ -221,10 +221,10 @@ export default class Home extends Component {
                   <Grid item />
                 </Grid>
                 <Grid item xs={12} sm={6} lg={4} container>
-                  <Grid container spacing={3}>
+                  <Grid container spacing={3} justify="flex-end">
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        label="From Date"
+                        label={page === 0 ? 'From Date' : 'Date'}
                         variant="outlined"
                         type="date"
                         value={fromDate}
@@ -233,17 +233,19 @@ export default class Home extends Component {
                         className="calendar-input"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="To Date"
-                        variant="outlined"
-                        type="date"
-                        value={toDate}
-                        onChange={this.handleToDate}
-                        InputLabelProps={{ shrink: true }}
-                        className="calendar-input"
-                      />
-                    </Grid>
+                    {page === 0 && (
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          label="To Date"
+                          variant="outlined"
+                          type="date"
+                          value={toDate}
+                          onChange={this.handleToDate}
+                          InputLabelProps={{ shrink: true }}
+                          className="calendar-input"
+                        />
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
               </Grid>
@@ -260,10 +262,11 @@ export default class Home extends Component {
                 <Tab label="Day View" />
               </Tabs>
             </div>
-            {
-              page === 0 ? <MonthView eventList={eventList} /> : <DayView />
-            }
-
+            {page === 0 ? (
+              <MonthView eventList={eventList} />
+            ) : (
+              <DayView eventList={eventList} />
+            )}
           </div>
         </div>
       </div>
