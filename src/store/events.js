@@ -9,10 +9,10 @@ class EventStore {
     this.eventArray = [];
     for (const data of agenda) {
       const startDate = moment(data.dateandtime.start).format(
-        'MMMM DD YYYY, h:mm:ss a',
+        'dddd, MMMM Do YYYY, h:mm:ss a',
       );
       const endDate = moment(data.dateandtime.end).format(
-        'MMMM DD YYYY, h:mm:ss a',
+        'dddd, MMMM Do YYYY, h:mm:ss a',
       );
       this.eventArray.push(
         new Event({
@@ -20,6 +20,7 @@ class EventStore {
           organizer: data.organizer,
           fromDate: startDate,
           toDate: endDate,
+          location: data.location ? data.location : null,
           description: data.description ? data.description : null,
           attendees: data.attendees ? data.attendees : null,
         }),
@@ -34,10 +35,10 @@ class EventStore {
     if (eventArray.length > 0 && eventArray[0].message !== 'No events found.') {
       for (const data of eventArray) {
         const startDate = moment(data.dateandtime.start).format(
-          'MMMM DD YYYY, h:mm:ss a',
+          'dddd, MMMM Do YYYY, h:mm:ss a',
         );
         const endDate = moment(data.dateandtime.end).format(
-          'MMMM DD YYYY, h:mm:ss a',
+          'dddd, MMMM Do YYYY, h:mm:ss a',
         );
         this.eventCollection.add(
           new Event({
@@ -45,6 +46,7 @@ class EventStore {
             organizer: data.organizer,
             fromDate: startDate,
             toDate: endDate,
+            location: data.location ? data.location : null,
             description: data.description ? data.description : null,
             attendees: data.attendees ? data.attendees : null,
           }),

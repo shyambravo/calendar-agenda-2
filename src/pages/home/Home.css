@@ -55,6 +55,21 @@
     margin: 15px;
 }
 
+.card-content {
+    display: grid;
+    grid-template-columns: 10% 90%;
+    grid-gap: 5px;
+    align-items: center;
+    border-bottom: 1px solid rgba(56, 55, 55, 0.144);
+    text-align: start;
+}
+
+.participants-count {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    align-items: center;
+}
+
 .attendees-list {
     margin: 5px;
     list-style: none;

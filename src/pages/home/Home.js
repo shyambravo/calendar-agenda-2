@@ -8,13 +8,16 @@ import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { FormControl, InputLabel } from '@material-ui/core';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import PersonIcon from '@material-ui/icons/Person';
+import DateRangeIcon from '@material-ui/icons/DateRange';
+import PeopleIcon from '@material-ui/icons/People';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 import EventStore from '../../store/events';
 
-import {
-  getEvents,
-  getAccessToken,
-  getCalendars,
-} from '../../services/Events';
+import { getEvents, getAccessToken, getCalendars } from '../../services/Events';
 
 export default class Home extends Component {
   constructor(props) {
@@ -55,22 +58,31 @@ export default class Home extends Component {
   }
 
   handleChange = (e) => {
-    this.setState({
-      cid: e.target.value,
-    }, () => this.selectCalendar());
+    this.setState(
+      {
+        cid: e.target.value,
+      },
+      () => this.selectCalendar(),
+    );
   };
 
   handleFromDate = (e) => {
-    this.setState({
-      fromDate: e.target.value,
-    }, () => this.filterByDate());
-  }
+    this.setState(
+      {
+        fromDate: e.target.value,
+      },
+      () => this.filterByDate(),
+    );
+  };
 
   handleToDate = (e) => {
-    this.setState({
-      toDate: e.target.value,
-    }, () => this.filterByDate());
-  }
+    this.setState(
+      {
+        toDate: e.target.value,
+      },
+      () => this.filterByDate(),
+    );
+  };
 
   filterByDate = async () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
@@ -81,7 +93,13 @@ export default class Home extends Component {
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    if (cid !== '0' && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+    if (
+      cid !== '0'
+      && token
+      && fromDate
+      && toDate
+      && Math.abs(a.diff(b, 'day')) < 30
+    ) {
       this.setState({
         isLoading: true,
         eventList: null,
@@ -115,7 +133,13 @@ export default class Home extends Component {
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    if (cid !== '0' && token && fromDate && toDate && (Math.abs(a.diff(b, 'day')) < 30)) {
+    if (
+      cid !== '0'
+      && token
+      && fromDate
+      && toDate
+      && Math.abs(a.diff(b, 'day')) < 30
+    ) {
       const events = await getEvents(token, calendarId, start, end);
       if (events[0].message === 'No events found.') {
         alert('No events found');
@@ -141,7 +165,12 @@ export default class Home extends Component {
 
   render() {
     const {
-      isLoading, eventList, cid, calendarList, fromDate, toDate,
+      isLoading,
+      eventList,
+      cid,
+      calendarList,
+      fromDate,
+      toDate,
     } = this.state;
     return (
       <div className="home-container">
@@ -156,7 +185,13 @@ export default class Home extends Component {
         <div className="scrollable-content">
           <div className="calendar-name">
             <div className="calendar-grid">
-              <Grid container alignItems="center" justify="space-between" className="calendar-grid-container" spacing={3}>
+              <Grid
+                container
+                alignItems="center"
+                justify="space-between"
+                className="calendar-grid-container"
+                spacing={3}
+              >
                 <Grid item xs={12} sm={6} lg={4}>
                   <Grid item xs={12} sm={6} md={6}>
                     <FormControl className="calendar-input">
@@ -170,14 +205,14 @@ export default class Home extends Component {
                       >
                         <MenuItem value="0">Select Calendar</MenuItem>
                         {calendarList.map((e) => (
-                          <MenuItem value={e.uid} key={e.uid}>{e.name}</MenuItem>
+                          <MenuItem value={e.uid} key={e.uid}>
+                            {e.name}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
-
                   </Grid>
                   <Grid item />
-
                 </Grid>
                 <Grid item xs={12} sm={6} lg={4} container>
                   <Grid container spacing={3}>
@@ -204,9 +239,7 @@ export default class Home extends Component {
                       />
                     </Grid>
                   </Grid>
-
                 </Grid>
-
               </Grid>
             </div>
           </div>
@@ -216,37 +249,48 @@ export default class Home extends Component {
               {eventList != null
                 && eventList.map((e, index) => (
                   // eslint-disable-next-line react/no-array-index-key
-                  <div className="card" key={index}>
-                    <h3>{e.title}</h3>
-                    <p>
-                      ORGANIZER -
-                      {e.organizer}
-                    </p>
-                    <p>
-                      FROM -
-                      {e.fromDate}
-                    </p>
-                    <p>
-                      TO -
-                      {e.toDate}
-                    </p>
-                    <p>{e.description ? e.description : ''}</p>
-                    {e.attendees && (
-                      <div className="attendees-list">
-                        <h3>Attendees List</h3>
-                        <ul>
-                          {e.attendees.map((person) => (
-                            <li key={person.email}>
-                              {person.email}
-                              {' '}
-                              -
-                              {person.status}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
+                  <Card className="card" key={index}>
+                    <CardContent>
+                      <Typography>
+                        <h3>{e.title}</h3>
+                      </Typography>
+                      <Typography className="card-content">
+                        <PersonIcon />
+                        <p>
+                          ORGANIZER -
+                          {e.organizer}
+                        </p>
+                      </Typography>
+                      <Typography className="card-content">
+                        <DateRangeIcon />
+                        <p>
+                          {e.fromDate}
+                          {' - '}
+                          {e.toDate}
+                        </p>
+                      </Typography>
+                      {e.attendees && (
+                        <Typography className="card-content">
+                          <PeopleIcon />
+                          <p>
+                            Total Participant :
+                            {e.attendees.length}
+                          </p>
+                        </Typography>
+                      )}
+                      {e.location && (
+                        <Typography className="card-content">
+                          <LocationOnIcon />
+                          <p>{e.location}</p>
+                        </Typography>
+                      )}
+                      {e.description && (
+                        <Typography className="card-content">
+                          <p>{e.description ? e.description : ''}</p>
+                        </Typography>
+                      )}
+                    </CardContent>
+                  </Card>
                 ))}
             </div>
           </div>
