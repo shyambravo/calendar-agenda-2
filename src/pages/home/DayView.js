@@ -45,11 +45,15 @@ export default class DayView extends Component {
     eventList.forEach((e) => {
       const hour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
       const minutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
-      const time = (hour * 60) + (minutes * 1);
+      const time = parseInt(hour * 60, 10) + parseInt(minutes, 10);
+      const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
+      const endMinues = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
+      const height = parseInt(endHour * 60, 10) + parseInt(endMinues, 10);
       const obj = {
         top: `${time}px`,
         left: 0,
         title: e.title,
+        height: `${height - time}px`,
       };
       temp.push(obj);
     });
@@ -66,7 +70,7 @@ export default class DayView extends Component {
         <div className="absolute-container">
           {
             events && events.map((event) => (
-              <div className="grid-absolute" style={{ top: event.top }}>
+              <div className="grid-absolute" style={{ top: event.top, height: event.height }}>
                 <p>{event.title}</p>
               </div>
             ))
