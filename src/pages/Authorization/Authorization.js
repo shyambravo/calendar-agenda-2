@@ -18,7 +18,7 @@ export default class Authorization extends Component {
       <div className="Authorization-container">
         <div className="shadow-container">
           <div className="agenda-title">
-            <h1>Welcome to Agenda Listing</h1>
+            <h1>Welcome to Calendar Demo</h1>
           </div>
           <Button variant="contained" onClick={this.authorize} color="primary">
             Authorize

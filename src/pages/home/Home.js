@@ -41,7 +41,12 @@ export default class Home extends Component {
   async componentDidMount() {
     const { location } = this.props;
     const parsed = queryString.parse(location.search).code;
-    const token = await getAccessToken(parsed);
+    let token = localStorage.getItem('token');
+    if (token === null) {
+      token = await getAccessToken(parsed);
+    }
+
+    localStorage.setItem('token', token);
     this.setState({
       token,
     });
@@ -201,7 +206,7 @@ export default class Home extends Component {
           </div>
         )}
         <div className="home-header">
-          <h3>Agenda Listing</h3>
+          <h3>Calendar Demo</h3>
         </div>
         <div className="scrollable-content">
           <div className="calendar-name">
