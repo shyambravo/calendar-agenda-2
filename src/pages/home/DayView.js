@@ -8,8 +8,6 @@ export default class DayView extends Component {
     super(props);
     this.state = {
       day: [],
-      events: null,
-      eventsList: null,
     };
     this.storePosition = this.storePosition.bind(this);
   }
@@ -53,7 +51,6 @@ export default class DayView extends Component {
         left: 0,
         title: e.title,
       };
-      console.log(obj);
       temp.push(obj);
     });
     // eslint-disable-next-line react/no-did-update-set-state
@@ -63,8 +60,7 @@ export default class DayView extends Component {
   }
 
   render() {
-    const { day, events, eventsList } = this.state;
-    console.log(events, eventsList);
+    const { day, events } = this.state;
     return (
       <div className="day-container">
         <div className="day-grid">
