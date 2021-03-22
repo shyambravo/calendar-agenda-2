@@ -131,15 +131,15 @@
 .day-container {
     width: 95%;
     margin: 0 auto; 
+    position: relative;
 }
 
 .day-grid {
     display: grid;
     grid-template-columns: 100%;
     justify-content: center;
-    grid-template-rows: repeat(24, 120px);
+    grid-template-rows: repeat(24, 60px);
     align-items: center;
-    position: relative;
 }
 
 .hour-div {
@@ -187,7 +187,6 @@
     width: 80%;
     height: 0;
     position: relative;
-    top: 60px;
     left: 20%;
 }
 

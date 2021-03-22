@@ -45,7 +45,7 @@ export default class DayView extends Component {
     eventList.forEach((e) => {
       const hour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
       const minutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
-      const time = (hour * 120) + (minutes * 2);
+      const time = (hour * 60) + (minutes * 1);
       const obj = {
         top: `${time}px`,
         left: 0,
@@ -63,16 +63,16 @@ export default class DayView extends Component {
     const { day, events } = this.state;
     return (
       <div className="day-container">
-        <div className="day-grid">
-          <div className="absolute-container">
-            {
+        <div className="absolute-container">
+          {
             events && events.map((event) => (
               <div className="grid-absolute" style={{ top: event.top }}>
                 <p>{event.title}</p>
               </div>
             ))
           }
-          </div>
+        </div>
+        <div className="day-grid">
           {day.map((e) => (
             <Card className="hour-div">
               <div className="side-panel">
