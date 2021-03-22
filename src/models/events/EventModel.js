@@ -5,7 +5,6 @@ const Event = Backbone.Model.extend({
   defaults: {
     title: '',
     description: '',
-    date: '',
   },
 
 });

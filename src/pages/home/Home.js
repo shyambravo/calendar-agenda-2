@@ -35,6 +35,7 @@ export default class Home extends Component {
     this.handleFromDate = this.handleFromDate.bind(this);
     this.handleToDate = this.handleToDate.bind(this);
     this.handlePageClick = this.handlePageClick.bind(this);
+    this.filterByDate = this.filterByDate.bind(this);
   }
 
   async componentDidMount() {
@@ -49,7 +50,7 @@ export default class Home extends Component {
       calendarList: [],
       isLoading: false,
     });
-    if (result.calendars.length > 0) {
+    if (result.calendars && result.calendars.length > 0) {
       this.setState({
         calendarList: result.calendars,
       });
@@ -83,38 +84,52 @@ export default class Home extends Component {
     );
   };
 
+  filterRange = async (eventStore, start, end, cid, token) => {
+    this.setState({
+      eventList: null,
+    });
+    const result = await eventStore.updateEvents(start, end, cid, token);
+    if (result === false) {
+      alert('No Events found.');
+    } else {
+      this.setState({
+        eventList: eventStore.eventCollection.toJSON(),
+      });
+    }
+  }
+
   filterByDate = async () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
     const {
-      eventStore, fromDate, toDate, cid, token,
+      eventStore, fromDate, toDate, cid, token, page,
     } = this.state;
     const start = moment(fromDate).format('YYYYMMDD');
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    if (
-      cid !== '0'
-      && token
-      && fromDate
-      && toDate
-      && Math.abs(a.diff(b, 'day')) < 30
-    ) {
-      this.setState({
-        isLoading: true,
-        eventList: null,
-      });
-      const result = await eventStore.updateEvents(start, end, cid, token);
-      if (result === false) {
-        alert('No Events found.');
+    this.setState({
+      isLoading: true,
+    });
+    if (page === 0) {
+      if (
+        cid !== '0'
+        && token
+        && fromDate
+        && toDate
+        && Math.abs(a.diff(b, 'day')) < 30
+      ) {
+        this.filterRange(eventStore, start, end, cid, token);
       } else {
-        this.setState({
-          eventList: eventStore.eventCollection.toJSON(),
-          isLoading: false,
-        });
+        alert('No calendar is selected or improper date');
       }
+    } else if (cid !== '0'
+      && token
+      && fromDate) {
+      this.filterRange(eventStore, start, start, cid, token);
     } else {
       alert('No calendar is selected or improper date');
     }
+
     this.setState({
       isLoading: false,
     });
