@@ -115,17 +115,26 @@ export default class DayView extends Component {
       arr[index].index = count;
       let width = parseFloat(100);
       // Logic for splitting the width and setting the position
+      let flag = 0;
+      let lefty;
       for (let i = 0; i < arr.length; i += 1) {
         const temp = parseFloat(width / count);
         if (arr[i].index !== 0) {
           // condition for the edge case in which the previous event's width is already split
           if (arr[i].width < temp) {
             width = (100 - arr[i].width);
-            // count -= 1;
+            count -= 1;
+            flag = 1;
+            lefty = arr[i].width;
           } else {
             // setting new width and position
             arr[i].width = temp;
-            arr[i].left = parseFloat(parseFloat(arr[i].index - 1) * temp);
+            if (flag === 1) {
+              arr[i].left = lefty;
+              lefty += temp;
+            } else {
+              arr[i].left = parseFloat(parseFloat(arr[i].index - 1) * temp);
+            }
           }
           // Marking as no conflict
           arr[i].index = 0;
