@@ -32,6 +32,7 @@ export default class DayView extends Component {
       };
       day.push(data);
     }
+    // Stores the 24 hours format in an Array and calls a helper function
     this.setState({
       day,
     }, () => this.storePosition(eventList));
@@ -45,6 +46,7 @@ export default class DayView extends Component {
   }
 
   storePosition = (eventList) => {
+    // This funcion creates an array of objects with keys for width and positioning
     const temp = [];
     eventList.forEach((e) => {
       const hour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
@@ -57,6 +59,8 @@ export default class DayView extends Component {
       const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
       const height = parseFloat(endHour * 60) + parseFloat(endMinutes);
       const total = (height - time);
+      // Model for storing the event with width and postion
+      // Need to create a backbone model and colection for this
       const obj = {
         startTime: time,
         endTime: height,
@@ -70,6 +74,7 @@ export default class DayView extends Component {
       };
       temp.push(obj);
     });
+    // Calls a function to sort
     this.sortByDate(temp);
     // eslint-disable-next-line react/no-did-update-set-state
     this.setState({
@@ -78,50 +83,54 @@ export default class DayView extends Component {
   }
 
   sortByDate = (arr) => {
+    // Function that sorts the events based on starting time and length
     arr.sort((a, b) => {
       if (a.startTime === b.startTime) {
         return b.totalTime - a.totalTime;
       }
       return a.startTime - b.startTime;
     });
+    // Calls a function to check for collision
     this.findConflict(arr);
   }
 
   findConflict = (arr) => {
-    // const map = {};
-    // for (let i = 0; i < arr.length; i++) {
-    //   map[`${i}`] = [];
-    // }
+    // Function that finds collision and set width and position
+    // Outer loop for iterating the events
     for (let index = 1; index < arr.length; index += 1) {
       let count = 0;
+      // Inner loop for finding the number of collision
       for (let i = 0; i < index; i += 1) {
+        /* checks the collision if the start time is
+         in between the start and end time of previous events */
         if (arr[index].startTime >= arr[i].startTime && arr[index].startTime <= arr[i].endTime) {
           count += 1;
           arr[i].index = count;
-          console.log('hit', index, i);
         }
       }
-
+      // Storing the counts to split the width
       count += 1;
       arr[index].index = count;
       let width = parseFloat(100);
+      // Logic for splitting the width and setting the position
       for (let i = 0; i < arr.length; i += 1) {
         const temp = parseFloat(width / count);
         if (arr[i].index !== 0) {
+          // condition for the edge case in which the previous event's width is already split
           if (arr[i].width < temp) {
             width = (100 - arr[i].width);
             // count -= 1;
           } else {
-            if (i === 3) {
-              console.log(i, arr[i].index);
-            }
+            // setting new width and position
             arr[i].width = temp;
             arr[i].left = parseFloat(parseFloat(arr[i].index - 1) * temp);
           }
+          // Marking as no conflict
           arr[i].index = 0;
         }
       }
     }
+    // setting the state for the updated events array
     this.setState({
       events: arr,
     });
@@ -129,7 +138,6 @@ export default class DayView extends Component {
 
   render() {
     const { day, events } = this.state;
-    console.log(events);
     return (
       <div className="day-container">
         <div className="absolute-container">
