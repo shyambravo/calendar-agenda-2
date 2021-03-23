@@ -125,7 +125,11 @@ export default class DayView extends Component {
             width = (100 - arr[i].width);
             count -= 1;
             flag = 1;
-            lefty = arr[i].width;
+            if (arr[i].left !== 0) {
+              lefty = 0;
+            } else {
+              lefty = arr[i].width;
+            }
           } else {
             // setting new width and position
             arr[i].width = temp;
