@@ -49,12 +49,14 @@ export default class DayView extends Component {
     // This funcion creates an array of objects with keys for width and positioning
     const temp = [];
     eventList.forEach((e) => {
-      const hour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
-      let minutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('m');
-      if (minutes === '0') {
-        minutes += 1;
+      const startHour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
+      let startMinutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('m');
+      /* Condition for the edge case in which event from 7pm - 8pm and another event from 8pm - 9pm.
+      Here we should not consider this as collision. */
+      if (startMinutes === '0') {
+        startMinutes += 1;
       }
-      const time = parseFloat(hour * 60) + parseFloat(minutes);
+      const time = parseFloat(startHour * 60) + parseFloat(startMinutes);
       const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
       const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
       const height = parseFloat(endHour * 60) + parseFloat(endMinutes);
