@@ -52,10 +52,10 @@ export default class DayView extends Component {
       if (minutes === '0') {
         minutes += 1;
       }
-      const time = parseFloat(hour * 60, 10) + parseFloat(minutes, 10);
+      const time = parseFloat(hour * 60) + parseFloat(minutes);
       const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
       const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
-      const height = parseFloat(endHour * 60, 10) + parseFloat(endMinutes, 10);
+      const height = parseFloat(endHour * 60) + parseFloat(endMinutes);
       const total = (height - time);
       const obj = {
         startTime: time,
@@ -98,6 +98,7 @@ export default class DayView extends Component {
         if (arr[index].startTime >= arr[i].startTime && arr[index].startTime <= arr[i].endTime) {
           count += 1;
           arr[i].index = count;
+          console.log('hit', index, i);
         }
       }
 
@@ -109,10 +110,13 @@ export default class DayView extends Component {
         if (arr[i].index !== 0) {
           if (arr[i].width < temp) {
             width = (100 - arr[i].width);
-            count -= 1;
+            // count -= 1;
           } else {
+            if (i === 3) {
+              console.log(i, arr[i].index);
+            }
             arr[i].width = temp;
-            arr[i].left = parseFloat(parseFloat(arr[i].index - 1, 10) * temp, 10);
+            arr[i].left = parseFloat(parseFloat(arr[i].index - 1) * temp);
           }
           arr[i].index = 0;
         }
