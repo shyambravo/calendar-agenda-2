@@ -48,11 +48,14 @@ export default class DayView extends Component {
     const temp = [];
     eventList.forEach((e) => {
       const hour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
-      const minutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
-      const time = parseInt(hour * 60, 10) + parseInt(minutes, 10);
+      let minutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('m');
+      if (minutes === '0') {
+        minutes += 1;
+      }
+      const time = parseFloat(hour * 60, 10) + parseFloat(minutes, 10);
       const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
       const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
-      const height = parseInt(endHour * 60, 10) + parseInt(endMinutes, 10);
+      const height = parseFloat(endHour * 60, 10) + parseFloat(endMinutes, 10);
       const total = (height - time);
       const obj = {
         startTime: time,
@@ -100,16 +103,16 @@ export default class DayView extends Component {
 
       count += 1;
       arr[index].index = count;
-      let width = 100;
+      let width = parseFloat(100);
       for (let i = 0; i < arr.length; i += 1) {
-        const temp = width / count;
+        const temp = parseFloat(width / count);
         if (arr[i].index !== 0) {
           if (arr[i].width < temp) {
             width = (100 - arr[i].width);
             count -= 1;
           } else {
             arr[i].width = temp;
-            arr[i].left = parseInt(parseInt(arr[i].index - 1, 10) * temp, 10);
+            arr[i].left = parseFloat(parseFloat(arr[i].index - 1, 10) * temp, 10);
           }
           arr[i].index = 0;
         }
@@ -122,6 +125,7 @@ export default class DayView extends Component {
 
   render() {
     const { day, events } = this.state;
+    console.log(events);
     return (
       <div className="day-container">
         <div className="absolute-container">

@@ -200,8 +200,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 10px;
-    border: 1px solid white;
+    border: 1px solid whitesmoke;
+    border-top: 0;
+    border-bottom: 0;
 }
 
 
