@@ -78,10 +78,6 @@ export default class DayView extends Component {
     });
     // Calls a function to sort
     this.sortByDate(temp);
-    // eslint-disable-next-line react/no-did-update-set-state
-    this.setState({
-      events: temp,
-    });
   }
 
   sortByDate = (arr) => {
@@ -99,6 +95,10 @@ export default class DayView extends Component {
   findConflict = (arr) => {
     // Function that finds collision and set width and position
     // Outer loop for iterating the events
+    const map = {};
+    for (let i = 0; i < arr.length; i += 1) {
+      map[`${i}`] = [];
+    }
     for (let index = 1; index < arr.length; index += 1) {
       let count = 0;
       // Inner loop for finding the number of collision
@@ -108,6 +108,8 @@ export default class DayView extends Component {
         if (arr[index].startTime >= arr[i].startTime && arr[index].startTime <= arr[i].endTime) {
           count += 1;
           arr[i].index = count;
+          map[`${index}`].push(i);
+          map[`${i}`].push(index);
         }
       }
       // Storing the counts to split the width
