@@ -56,20 +56,20 @@ export default class DayView extends Component {
       if (startMinutes === '0') {
         startMinutes += 1;
       }
-      const time = parseFloat(startHour * 60) + parseFloat(startMinutes);
+      const startTime = parseFloat(startHour * 60) + parseFloat(startMinutes);
       const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
       const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
-      const height = parseFloat(endHour * 60) + parseFloat(endMinutes);
-      const total = (height - time);
+      const endTime = parseFloat(endHour * 60) + parseFloat(endMinutes);
+      const total = (endTime - startTime);
       // Model for storing the event with width and postion
       // Need to create a backbone model and colection for this
       const obj = {
-        startTime: time,
-        endTime: height,
-        top: `${time}px`,
+        startTime,
+        endTime,
+        top: `${startTime}px`,
         left: 0,
         title: e.title,
-        height: `${height - time}px`,
+        height: `${total}px`,
         totalTime: total,
         index: 0,
         width: 100,
@@ -116,7 +116,7 @@ export default class DayView extends Component {
       let width = parseFloat(100);
       // Logic for splitting the width and setting the position
       let flag = 0;
-      let lefty;
+      let leftTemp;
       for (let i = 0; i < arr.length; i += 1) {
         const temp = parseFloat(width / count);
         if (arr[i].index !== 0) {
@@ -126,16 +126,16 @@ export default class DayView extends Component {
             count -= 1;
             flag = 1;
             if (arr[i].left !== 0) {
-              lefty = 0;
+              leftTemp = 0;
             } else {
-              lefty = arr[i].width;
+              leftTemp = arr[i].width;
             }
           } else {
             // setting new width and position
             arr[i].width = temp;
             if (flag === 1) {
-              arr[i].left = lefty;
-              lefty += temp;
+              arr[i].left = leftTemp;
+              leftTemp += temp;
             } else {
               arr[i].left = parseFloat(parseFloat(arr[i].index - 1) * temp);
             }
