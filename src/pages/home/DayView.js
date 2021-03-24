@@ -13,7 +13,6 @@ export default class DayView extends Component {
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
     this.findConflict = this.findConflict.bind(this);
-    // this.setWidthAndLeft = this.setWidthAndLeft.bind(this);
   }
 
   componentDidMount() {
@@ -71,7 +70,6 @@ export default class DayView extends Component {
         title: e.title,
         height: `${total}px`,
         totalTime: total,
-        index: 0,
         width: 100,
       };
       temp.push(obj);
@@ -95,59 +93,21 @@ export default class DayView extends Component {
   findConflict = (arr) => {
     // Function that finds collision and set width and position
     // Outer loop for iterating the events
-    const map = {};
-    for (let i = 0; i < arr.length; i += 1) {
-      map[`${i}`] = [];
-    }
     for (let index = 1; index < arr.length; index += 1) {
-      let count = 0;
       // Inner loop for finding the number of collision
-      for (let i = 0; i < index; i += 1) {
+      for (let i = (index - 1); i >= 0; i -= 1) {
         /* checks the collision if the start time is
          in between the start and end time of previous events */
         if (arr[index].startTime >= arr[i].startTime && arr[index].startTime <= arr[i].endTime) {
-          count += 1;
-          arr[i].index = count;
-          map[`${index}`].push(i);
-          map[`${i}`].push(index);
-        }
-      }
-      // Storing the counts to split the width
-      count += 1;
-      arr[index].index = count;
-      let width = parseFloat(100);
-      // Logic for splitting the width and setting the position
-      let flag = 0;
-      let leftTemp;
-      for (let i = 0; i < arr.length; i += 1) {
-        const temp = parseFloat(width / count);
-        if (arr[i].index !== 0) {
-          // condition for the edge case in which the previous event's width is already split
-          if (arr[i].width < temp) {
-            width = (100 - arr[i].width);
-            count -= 1;
-            flag = 1;
-            if (arr[i].left !== 0) {
-              leftTemp = 0;
-            } else {
-              leftTemp = arr[i].width;
-            }
-          } else {
-            // setting new width and position
-            arr[i].width = temp;
-            if (flag === 1) {
-              arr[i].left = leftTemp;
-              leftTemp += temp;
-            } else {
-              arr[i].left = parseFloat(parseFloat(arr[i].index - 1) * temp);
-            }
-          }
-          // Marking as no conflict
-          arr[i].index = 0;
+          let width = (100 - arr[i].left);
+          width /= 2;
+          arr[index].width = width;
+          arr[i].width = width;
+          arr[index].left = (arr[i].left + arr[i].width);
+          break;
         }
       }
     }
-    // setting the state for the updated events array
     this.setState({
       events: arr,
     });
