@@ -46,11 +46,12 @@ export default class Home extends Component {
     if (token === null) {
       token = await getAccessToken(parsed);
       tokenTime = moment().format('YYYY MM DD, h:mm:ss');
+      tokenTime = moment(tokenTime, 'YYYY MM DD, h:mm:ss').add(3600, 'seconds');
       localStorage.setItem('token', token);
       localStorage.setItem('tokenTime', tokenTime);
     } else {
       const currentTime = moment().format('YYYY MM DD, h:mm:ss');
-      if (!moment(tokenTime, 'YYYY MM DD, h:mm:ss').isBefore(currentTime)) {
+      if (!moment(currentTime, 'YYYY MM DD, h:mm:ss').isBefore(tokenTime)) {
         window.location = 'http://localhost:3000/';
       }
     }
