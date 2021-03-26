@@ -14,6 +14,7 @@ export default class DayView extends Component {
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
     this.findConflict = this.findConflict.bind(this);
+    this.recursiveFunction = this.recursiveFunction.bind(this);
   }
 
   componentDidMount() {
@@ -92,21 +93,37 @@ export default class DayView extends Component {
     this.findConflict(arr);
   }
 
+  recursiveFunction = (arr, x, y, start, end) => {
+    // Base Condition
+    if (start > end) return false;
+
+    // Find the middle index
+    const mid = Math.floor((start + end) / 2);
+
+    // Compare mid with given key x
+
+    if (x >= arr[mid].start && x <= arr[mid].end) return true;
+
+    // If element at mid is greater than x,
+    // search in the left half of mid
+    if (arr[mid].start > y) return this.recursiveFunction(arr, x, y, start, mid - 1);
+    return this.recursiveFunction(arr, x, y, mid + 1, end);
+  }
+
   findConflict = async (arr) => {
     // Function that finds collision and set width and position
     // Outer loop for iterating the events
     const mark = [];
     for (let index = 0; index < arr.length; index += 1) {
-      const { startTime } = arr[index];
+      const { startTime, endTime } = arr[index];
       let flag = false;
       for (let i = 0; i < mark.length; i += 1) {
         flag = false;
-        for (let t = 0; t < mark[i].length; t += 1) {
-          if (startTime >= mark[i][t].start && startTime <= mark[i][t].end) {
-            flag = true;
-            break;
-          }
+        const result = this.recursiveFunction(mark[i], startTime, endTime, 0, mark[i].length - 1);
+        if (result) {
+          flag = true;
         }
+
         if (flag === false) {
           arr[index].column = i;
           mark[i].push({ start: arr[index].startTime, end: arr[index].endTime });
@@ -134,12 +151,14 @@ export default class DayView extends Component {
       <div className="day-container">
         <div className="absolute-container">
           {
-            events && events.map((event) => (
+            events && events.map((event, index) => (
               <div
                 className="grid-absolute"
                 style={{
                   top: event.top, height: event.height, width: `${width}%`, left: `${(event.column * width)}%`,
                 }}
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
               >
                 <p>{event.title}</p>
               </div>
@@ -147,8 +166,9 @@ export default class DayView extends Component {
           }
         </div>
         <div className="day-grid">
-          {day.map((e) => (
-            <Card className="hour-div">
+          {day.map((e, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Card className="hour-div" key={index}>
               <div className="side-panel">
                 <p>{e.time}</p>
               </div>
