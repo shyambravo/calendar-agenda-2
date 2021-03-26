@@ -43,12 +43,16 @@ export default class Home extends Component {
     const parsed = queryString.parse(location.search).code;
     let token = localStorage.getItem('token');
     let tokenTime = localStorage.getItem('tokenTime');
-    const currentTime = moment().format('YYYY MM DD, h:mm:ss');
-    if (token === null || !moment(tokenTime, 'YYYY MM DD, h:mm:ss').isBefore(currentTime)) {
+    if (token === null) {
       token = await getAccessToken(parsed);
       tokenTime = moment().format('YYYY MM DD, h:mm:ss');
       localStorage.setItem('token', token);
       localStorage.setItem('tokenTime', tokenTime);
+    } else {
+      const currentTime = moment().format('YYYY MM DD, h:mm:ss');
+      if (!moment(tokenTime, 'YYYY MM DD, h:mm:ss').isBefore(currentTime)) {
+        window.location = 'http://localhost:3000/';
+      }
     }
 
     this.setState({
