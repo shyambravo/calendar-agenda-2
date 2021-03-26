@@ -101,6 +101,7 @@ export default class Home extends Component {
   filterRange = async (eventStore, start, end, cid, token) => {
     this.setState({
       eventList: null,
+      isLoading: true,
     });
     const result = await eventStore.updateEvents(start, end, cid, token);
     if (result === false) {
@@ -108,6 +109,7 @@ export default class Home extends Component {
     } else {
       this.setState({
         eventList: eventStore.eventCollection.toJSON(),
+        isLoading: false,
       });
     }
   }
@@ -121,9 +123,6 @@ export default class Home extends Component {
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
     const b = moment(end);
-    this.setState({
-      isLoading: true,
-    });
     if (page === 0) {
       if (
         cid !== '0'
@@ -143,10 +142,6 @@ export default class Home extends Component {
     } else {
       alert('No calendar is selected or improper date');
     }
-
-    this.setState({
-      isLoading: false,
-    });
   };
 
   selectCalendar = async () => {

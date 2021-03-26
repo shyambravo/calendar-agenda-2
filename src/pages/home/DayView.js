@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import './Home.css';
 import Card from '@material-ui/core/Card';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
 
 export default class DayView extends Component {
@@ -10,6 +11,7 @@ export default class DayView extends Component {
     this.state = {
       day: [],
       width: null,
+      isLoading: false,
     };
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
@@ -48,6 +50,9 @@ export default class DayView extends Component {
 
   storePosition = (eventList) => {
     // This funcion creates an array of objects with keys for width and positioning
+    this.setState({
+      isLoading: true,
+    });
     const temp = [];
     eventList.forEach((e) => {
       const startHour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('H');
@@ -142,13 +147,21 @@ export default class DayView extends Component {
     this.setState({
       events: arr,
       width: parseFloat(100 / column),
+      isLoading: false,
     });
   }
 
   render() {
-    const { day, events, width } = this.state;
+    const {
+      day, events, width, isLoading,
+    } = this.state;
     return (
       <div className="day-container">
+        {isLoading && (
+        <div className="backdrop">
+          <CircularProgress disableShrink className="loader" />
+        </div>
+        )}
         <div className="absolute-container">
           {
             events && events.map((event, index) => (
