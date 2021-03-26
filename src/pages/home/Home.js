@@ -42,11 +42,15 @@ export default class Home extends Component {
     const { location } = this.props;
     const parsed = queryString.parse(location.search).code;
     let token = localStorage.getItem('token');
-    if (token === null) {
+    let tokenTime = localStorage.getItem('tokenTime');
+    const currentTime = moment().format('YYYY MM DD, h:mm:ss');
+    if (token === null || !moment(tokenTime, 'YYYY MM DD, h:mm:ss').isBefore(currentTime)) {
       token = await getAccessToken(parsed);
+      tokenTime = moment().format('YYYY MM DD, h:mm:ss');
+      localStorage.setItem('token', token);
+      localStorage.setItem('tokenTime', tokenTime);
     }
 
-    localStorage.setItem('token', token);
     this.setState({
       token,
     });
