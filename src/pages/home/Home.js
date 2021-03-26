@@ -206,7 +206,7 @@ export default class Home extends Component {
           </div>
         )}
         <div className="home-header">
-          <h3>Calendar Demo V-0.2.3</h3>
+          <h3>Calendar Demo V-0.3.3</h3>
         </div>
         <div className="scrollable-content">
           <div className="calendar-name">

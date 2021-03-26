@@ -9,10 +9,12 @@ export default class DayView extends Component {
     super(props);
     this.state = {
       day: [],
+      width: null,
     };
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
     this.findConflict = this.findConflict.bind(this);
+    this.binarySearch = this.binarySearch.bind(this);
   }
 
   componentDidMount() {
@@ -48,7 +50,7 @@ export default class DayView extends Component {
     // This funcion creates an array of objects with keys for width and positioning
     const temp = [];
     eventList.forEach((e) => {
-      const startHour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
+      const startHour = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('H');
       let startMinutes = moment(e.fromDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('m');
       /* Condition for the edge case in which event from 7pm - 8pm and another event from 8pm - 9pm.
       Here we should not consider this as collision. */
@@ -56,8 +58,8 @@ export default class DayView extends Component {
         startMinutes += 1;
       }
       const startTime = parseFloat(startHour * 60) + parseFloat(startMinutes);
-      const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('HH');
-      const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('mm');
+      const endHour = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('H');
+      const endMinutes = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('m');
       const endTime = parseFloat(endHour * 60) + parseFloat(endMinutes);
       const total = (endTime - startTime);
       // Model for storing the event with width and postion
@@ -71,6 +73,8 @@ export default class DayView extends Component {
         height: `${total}px`,
         totalTime: total,
         width: 100,
+        startHour: parseInt(startHour, 10),
+        column: null,
       };
       temp.push(obj);
     });
@@ -90,31 +94,70 @@ export default class DayView extends Component {
     this.findConflict(arr);
   }
 
-  findConflict = (arr) => {
+   binarySearch = (arr, x, start, end) => {
+     // Base Condition
+     if (start > end) return false;
+
+     // Find the middle index
+     const mid = Math.floor((start + end) / 2);
+
+     // Compare mid with given key x
+     if (x >= arr[mid].start && x <= arr[mid].end) return true;
+
+     // If element at mid is greater than x,
+     // search in the left half of mid
+     if (arr[mid].start > x) return this.binarySearch(arr, x, start, mid - 1);
+     return this.binarySearch(arr, x, mid + 1, end);
+   }
+
+  findConflict = async (arr) => {
     // Function that finds collision and set width and position
     // Outer loop for iterating the events
-    for (let index = 1; index < arr.length; index += 1) {
+    const mark = [{}];
+    for (let index = 0; index < arr.length; index += 1) {
       // Inner loop for finding the number of collision
-      for (let i = (index - 1); i >= 0; i -= 1) {
-        /* checks the collision if the start time is
-         in between the start and end time of previous events */
-        if (arr[index].startTime >= arr[i].startTime && arr[index].startTime <= arr[i].endTime) {
-          let width = (100 - arr[i].left);
-          width /= 2;
-          arr[index].width = width;
-          arr[i].width = width;
-          arr[index].left = (arr[i].left + arr[i].width);
-          break;
+      const { startHour } = arr;
+      let flag = false;
+      for (let i = 0; i < mark.length; i += 1) {
+        if (Object.prototype.hasOwnProperty.call(mark[i], `${startHour}`)) {
+          // eslint-disable-next-line no-await-in-loop
+          const result = await this.binarySearch(arr, mark[i][`${startHour}`], 0, mark[i][`${startHour}`].length - 1);
+          if (result) {
+            flag = true;
+          } else {
+            flag = false;
+            mark[i][`${startHour}`].push({ start: arr[index].startTime, end: arr[index].endTime });
+            arr[index].column = i;
+          }
+        } else {
+          flag = false;
+          mark[i][`${startHour}`] = [];
+          arr[index].column = i;
+          mark[i][`${startHour}`].push({ start: arr[index].startTime, end: arr[index].endTime });
         }
       }
+
+      if (flag === true) {
+        arr[index].column = mark.length;
+        const tempObj = {
+          [`${startHour}`]: [{ start: arr[index].startTime, end: arr[index].endTime }],
+        };
+
+        mark.push(tempObj);
+      }
     }
+
+    const column = mark.length;
+
     this.setState({
       events: arr,
+      width: parseFloat(100 / column),
     });
   }
 
   render() {
-    const { day, events } = this.state;
+    const { day, events, width } = this.state;
+    console.log(events, width);
     return (
       <div className="day-container">
         <div className="absolute-container">
