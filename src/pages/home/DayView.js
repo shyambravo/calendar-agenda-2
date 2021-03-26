@@ -14,7 +14,6 @@ export default class DayView extends Component {
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
     this.findConflict = this.findConflict.bind(this);
-    this.binarySearch = this.binarySearch.bind(this);
   }
 
   componentDidMount() {
@@ -73,7 +72,6 @@ export default class DayView extends Component {
         height: `${total}px`,
         totalTime: total,
         width: 100,
-        startHour: parseInt(startHour, 10),
         column: null,
       };
       temp.push(obj);
@@ -94,56 +92,31 @@ export default class DayView extends Component {
     this.findConflict(arr);
   }
 
-   binarySearch = (arr, x, start, end) => {
-     // Base Condition
-     if (start > end) return false;
-
-     // Find the middle index
-     const mid = Math.floor((start + end) / 2);
-
-     // Compare mid with given key x
-     if (x >= arr[mid].start && x <= arr[mid].end) return true;
-
-     // If element at mid is greater than x,
-     // search in the left half of mid
-     if (arr[mid].start > x) return this.binarySearch(arr, x, start, mid - 1);
-     return this.binarySearch(arr, x, mid + 1, end);
-   }
-
   findConflict = async (arr) => {
     // Function that finds collision and set width and position
     // Outer loop for iterating the events
-    const mark = [{}];
+    const mark = [];
     for (let index = 0; index < arr.length; index += 1) {
-      // Inner loop for finding the number of collision
-      const { startHour } = arr;
+      const { startTime } = arr[index];
       let flag = false;
       for (let i = 0; i < mark.length; i += 1) {
-        if (Object.prototype.hasOwnProperty.call(mark[i], `${startHour}`)) {
-          // eslint-disable-next-line no-await-in-loop
-          const result = await this.binarySearch(arr, mark[i][`${startHour}`], 0, mark[i][`${startHour}`].length - 1);
-          if (result) {
+        flag = false;
+        for (let t = 0; t < mark[i].length; t += 1) {
+          if (startTime >= mark[i][t].start && startTime <= mark[i][t].end) {
             flag = true;
-          } else {
-            flag = false;
-            mark[i][`${startHour}`].push({ start: arr[index].startTime, end: arr[index].endTime });
-            arr[index].column = i;
+            break;
           }
-        } else {
-          flag = false;
-          mark[i][`${startHour}`] = [];
+        }
+        if (flag === false) {
           arr[index].column = i;
-          mark[i][`${startHour}`].push({ start: arr[index].startTime, end: arr[index].endTime });
+          mark[i].push({ start: arr[index].startTime, end: arr[index].endTime });
+          break;
         }
       }
 
-      if (flag === true) {
+      if (flag === true || mark.length === 0) {
         arr[index].column = mark.length;
-        const tempObj = {
-          [`${startHour}`]: [{ start: arr[index].startTime, end: arr[index].endTime }],
-        };
-
-        mark.push(tempObj);
+        mark.push([{ start: arr[index].startTime, end: arr[index].endTime }]);
       }
     }
 
@@ -157,7 +130,6 @@ export default class DayView extends Component {
 
   render() {
     const { day, events, width } = this.state;
-    console.log(events, width);
     return (
       <div className="day-container">
         <div className="absolute-container">
@@ -166,7 +138,7 @@ export default class DayView extends Component {
               <div
                 className="grid-absolute"
                 style={{
-                  top: event.top, height: event.height, width: `${event.width}%`, left: `${event.left}%`,
+                  top: event.top, height: event.height, width: `${width}%`, left: `${(event.column * width)}%`,
                 }}
               >
                 <p>{event.title}</p>
