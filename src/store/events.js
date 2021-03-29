@@ -74,11 +74,12 @@ class EventStore {
   updateSingleEvent = async (data) => {
     const token = localStorage.getItem('token');
     const result = await editEvent(token, data);
-    if (result === 'success') {
-      const updateModel = this.eventCollection.get(data.id);
-      updateModel.set({ title: data.title });
-      this.eventCollection.create(updateModel);
-    }
+    const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+    const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+    const updateModel = this.eventCollection.get(data.id);
+    updateModel.set({ title: data.title, fromDate, toDate });
+    this.eventCollection.create(updateModel);
+    return result;
   }
 }
 

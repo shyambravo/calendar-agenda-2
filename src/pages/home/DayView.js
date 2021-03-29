@@ -235,7 +235,7 @@ export default class DayView extends Component {
       this.setState({
         fromTime: value,
       });
-    } else if (type === 'toTime') {
+    } else if (type === 'totime') {
       this.setState({
         toTime: value,
       });

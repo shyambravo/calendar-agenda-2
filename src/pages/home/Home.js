@@ -55,7 +55,7 @@ export default class Home extends Component {
       localStorage.setItem('tokenTime', tokenTime);
     } else {
       const currentTime = moment().format('YYYY MM DD, h:mm:ss');
-      if (!moment(currentTime, 'YYYY MM DD, h:mm:ss').isBefore(tokenTime)) {
+      if (!moment(currentTime, 'YYYY MM DD, h:mm:ss').isBefore(moment(tokenTime, 'YYYY MM DD, h:mm:ss'))) {
         localStorage.removeItem('token');
         localStorage.removeItem('tokenTime');
         window.location = 'http://localhost:3000/';
@@ -231,6 +231,7 @@ export default class Home extends Component {
   handlePageClick = (event, newValue) => {
     this.setState({
       page: newValue,
+      eventList: [],
     });
   };
 
