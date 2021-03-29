@@ -44,7 +44,6 @@ export default class Home extends Component {
     this.sortArrayByDate = this.sortArrayByDate.bind(this);
     this.storeByKeys = this.storeByKeys.bind(this);
     this.updateCollection = this.updateCollection.bind(this);
-    console.log(pkg);
   }
 
   async componentDidMount() {
