@@ -29,6 +29,7 @@ export default class Home extends Component {
       cid: '0',
       eventStore: null,
       page: 0,
+      eventObj: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
@@ -36,6 +37,8 @@ export default class Home extends Component {
     this.handleToDate = this.handleToDate.bind(this);
     this.handlePageClick = this.handlePageClick.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
+    this.sortArrayByDate = this.sortArrayByDate.bind(this);
+    this.storeByKeys = this.storeByKeys.bind(this);
   }
 
   async componentDidMount() {
@@ -52,6 +55,8 @@ export default class Home extends Component {
     } else {
       const currentTime = moment().format('YYYY MM DD, h:mm:ss');
       if (!moment(currentTime, 'YYYY MM DD, h:mm:ss').isBefore(tokenTime)) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('tokenTime');
         window.location = 'http://localhost:3000/';
       }
     }
@@ -98,17 +103,45 @@ export default class Home extends Component {
     );
   };
 
+  sortArrayByDate = async (arr) => {
+    arr.sort((a, b) => a.date - b.date);
+    const result = await this.storeByKeys(arr);
+
+    return result;
+  }
+
+  storeByKeys = (arr) => {
+    const eventObj = {};
+    for (let i = 0; i < arr.length; i += 1) {
+      if (Object.prototype.hasOwnProperty.call(eventObj, arr[i].date)) {
+        eventObj[arr[i].date].push(arr[i]);
+      } else {
+        eventObj[`${arr[i].date}`] = [];
+        eventObj[`${arr[i].date}`].push(arr[i]);
+      }
+    }
+    this.setState({
+      eventObj,
+    });
+    return arr;
+  }
+
   filterRange = async (eventStore, start, end, cid, token) => {
     this.setState({
       eventList: null,
       isLoading: true,
     });
     const result = await eventStore.updateEvents(start, end, cid, token);
+    const sortedArray = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
     if (result === false) {
       alert('No Events found.');
+      this.setState({
+        eventList: sortedArray,
+        isLoading: false,
+      });
     } else {
       this.setState({
-        eventList: eventStore.eventCollection.toJSON(),
+        eventList: sortedArray,
         isLoading: false,
       });
     }
@@ -173,8 +206,9 @@ export default class Home extends Component {
         });
       } else {
         const temp = new EventStore(events);
+        const sortedArray = this.sortArrayByDate(temp.eventCollection.toJSON());
         this.setState({
-          eventList: temp.eventCollection.toJSON(),
+          eventList: sortedArray,
           eventStore: temp,
         });
       }
@@ -201,6 +235,8 @@ export default class Home extends Component {
       fromDate,
       toDate,
       page,
+      eventObj,
+      eventStore,
     } = this.state;
     return (
       <div className="home-container">
@@ -282,14 +318,14 @@ export default class Home extends Component {
                 onChange={this.handlePageClick}
                 variant="fullWidth"
               >
-                <Tab label="Month View" />
+                <Tab label="Agenda View" />
                 <Tab label="Day View" />
               </Tabs>
             </div>
             {page === 0 ? (
-              <MonthView eventList={eventList} />
+              <MonthView eventList={eventObj} />
             ) : (
-              <DayView eventList={eventList} />
+              <DayView eventList={eventList} store={eventStore} />
             )}
           </div>
         </div>

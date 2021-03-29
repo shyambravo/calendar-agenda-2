@@ -47,6 +47,18 @@ const getCalendars = async (token) => {
   return result;
 };
 
+const editEvent = async (token, data) => {
+  const params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify(data),
+  };
+  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/editEvent/${token}`, params).then((res) => res.json()).catch(() => 0);
+  return result;
+};
+
 export {
-  getEvents, getAccessToken, getCalendarId, getCalendars,
+  getEvents, getAccessToken, getCalendarId, getCalendars, editEvent,
 };
