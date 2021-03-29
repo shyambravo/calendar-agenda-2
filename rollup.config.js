@@ -7,6 +7,7 @@ import replace from '@rollup/plugin-replace';
 
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
+import json from '@rollup/plugin-json';
 
 export default {
   input: './src/index.js',
@@ -43,5 +44,6 @@ export default {
     }),
     resolve(),
     commonjs(),
+    json(),
   ],
 };

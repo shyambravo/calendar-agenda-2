@@ -13,6 +13,8 @@ import Tab from '@material-ui/core/Tab';
 import EventStore from '../../store/events';
 import MonthView from './MonthView';
 import DayView from './DayView';
+import CalendarStore from '../../store/calendar';
+import pkg from '../../../package.json';
 
 import { getEvents, getAccessToken, getCalendars } from '../../services/Events';
 
@@ -20,6 +22,7 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      calendarStore: null,
       calendarList: [],
       eventList: [],
       fromDate: moment().format('YYYY-MM-DD'),
@@ -30,6 +33,7 @@ export default class Home extends Component {
       eventStore: null,
       page: 0,
       eventObj: null,
+      calColor: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
@@ -40,6 +44,7 @@ export default class Home extends Component {
     this.sortArrayByDate = this.sortArrayByDate.bind(this);
     this.storeByKeys = this.storeByKeys.bind(this);
     this.updateCollection = this.updateCollection.bind(this);
+    console.log(pkg);
   }
 
   async componentDidMount() {
@@ -71,8 +76,10 @@ export default class Home extends Component {
       isLoading: false,
     });
     if (result.calendars && result.calendars.length > 0) {
+      const calendarStore = new CalendarStore(result.calendars);
       this.setState({
-        calendarList: result.calendars,
+        calendarStore,
+        calendarList: calendarStore.calendarCollection.toJSON(),
       });
     }
   }
@@ -190,9 +197,11 @@ export default class Home extends Component {
       isLoading: true,
     });
     const {
-      token, cid, fromDate, toDate,
+      token, cid, fromDate, toDate, calendarStore,
     } = this.state;
     const calendarId = cid;
+    let calendarColor = calendarStore.calendarCollection.get(cid);
+    calendarColor = calendarColor.toJSON().color;
     const start = moment(fromDate).format('YYYYMMDD');
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
@@ -225,6 +234,7 @@ export default class Home extends Component {
     }
     this.setState({
       isLoading: false,
+      calColor: calendarColor,
     });
   };
 
@@ -246,6 +256,7 @@ export default class Home extends Component {
       page,
       eventObj,
       eventStore,
+      calColor,
     } = this.state;
     return (
       <div className="home-container">
@@ -255,7 +266,7 @@ export default class Home extends Component {
           </div>
         )}
         <div className="home-header">
-          <h3>Calendar Demo V-0.4.0</h3>
+          <h3>{`Calendar Demo V-${pkg.version}`}</h3>
         </div>
         <div className="scrollable-content">
           <div className="calendar-name">
@@ -280,7 +291,7 @@ export default class Home extends Component {
                       >
                         <MenuItem value="0">Select Calendar</MenuItem>
                         {calendarList.map((e) => (
-                          <MenuItem value={e.uid} key={e.uid}>
+                          <MenuItem value={e.id} key={e.id}>
                             {e.name}
                           </MenuItem>
                         ))}
@@ -334,7 +345,7 @@ export default class Home extends Component {
             {page === 0 ? (
               <MonthView eventList={eventObj} />
             ) : (
-              <DayView eventList={eventList} store={eventStore} />
+              <DayView eventList={eventList} store={eventStore} calColor={calColor} />
             )}
           </div>
         </div>

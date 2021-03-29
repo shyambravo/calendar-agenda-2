@@ -257,6 +257,7 @@ export default class DayView extends Component {
       toTime,
       title,
     } = this.state;
+    const { calColor } = this.props;
     return (
       <div className="day-container">
         {isLoading && (
@@ -329,7 +330,7 @@ export default class DayView extends Component {
                   height: event.height,
                   width: `${width}%`,
                   left: `${event.column * width}%`,
-                  backgroundColor: event.color,
+                  backgroundColor: event.color === '' ? calColor : event.color,
                 }}
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}

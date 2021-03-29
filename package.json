@@ -8,6 +8,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@rollup/plugin-json": "^4.1.0",
     "babel-eslint": "^10.1.0",
     "backbone": "^1.4.0",
     "eslint-config-airbnb": "^18.2.1",
