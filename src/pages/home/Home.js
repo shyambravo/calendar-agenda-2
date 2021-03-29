@@ -39,6 +39,7 @@ export default class Home extends Component {
     this.filterByDate = this.filterByDate.bind(this);
     this.sortArrayByDate = this.sortArrayByDate.bind(this);
     this.storeByKeys = this.storeByKeys.bind(this);
+    this.updateCollection = this.updateCollection.bind(this);
   }
 
   async componentDidMount() {
@@ -147,6 +148,13 @@ export default class Home extends Component {
     }
   }
 
+  updateCollection = () => {
+    const { eventStore } = this.state;
+    this.setState({
+      eventList: eventStore.eventCollection.toJSON(),
+    });
+  }
+
   filterByDate = async () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
     const {
@@ -199,13 +207,13 @@ export default class Home extends Component {
       const events = await getEvents(token, calendarId, start, end);
       if (events[0].message === 'No events found.') {
         alert('No events found');
-        const temp = new EventStore([]);
+        const temp = new EventStore([], this.updateCollection);
         this.setState({
           eventList: temp.eventCollection.toJSON(),
           eventStore: temp,
         });
       } else {
-        const temp = new EventStore(events);
+        const temp = new EventStore(events, this.updateCollection);
         const sortedArray = this.sortArrayByDate(temp.eventCollection.toJSON());
         this.setState({
           eventList: sortedArray,

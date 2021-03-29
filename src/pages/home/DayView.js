@@ -106,7 +106,7 @@ export default class DayView extends Component {
         // Model for storing the event with width and postion
         // Need to create a backbone model and colection for this
         const obj = {
-          eventId: e.eventId,
+          id: e.id,
           startTime,
           endTime,
           top: `${startTime}px`,
@@ -221,7 +221,7 @@ export default class DayView extends Component {
       title, fromTime, toTime, editEvent,
     } = this.state;
     const data = {
-      id: editEvent.eventID,
+      id: editEvent.id,
       title,
       fromTime,
       toTime,

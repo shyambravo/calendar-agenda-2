@@ -5,7 +5,7 @@ import EventList from '../collections/events/EventCollection';
 import { getEvents, editEvent } from '../services/Events';
 
 class EventStore {
-  constructor(agenda) {
+  constructor(agenda, cb) {
     this.eventArray = [];
     for (const data of agenda) {
       const startDate = moment(data.dateandtime.start).format(
@@ -18,7 +18,7 @@ class EventStore {
       const unixDate = moment(date, 'YYYY-MM-DD').format('x');
       this.eventArray.push(
         new Event({
-          eventId: data.uid,
+          id: data.uid,
           title: data.title,
           organizer: data.organizer,
           fromDate: startDate,
@@ -33,6 +33,9 @@ class EventStore {
     }
 
     this.eventCollection = new EventList(this.eventArray);
+    this.eventCollection.on('all', () => {
+      cb();
+    });
   }
 
   updateEvents = async (fromDate, toDate, cid, token) => {
@@ -50,7 +53,7 @@ class EventStore {
         const unixDate = moment(date, 'YYYY-MM-DD').format('x');
         this.eventCollection.add(
           new Event({
-            eventId: data.uid,
+            id: data.uid,
             title: data.title,
             organizer: data.organizer,
             fromDate: startDate,
@@ -71,7 +74,11 @@ class EventStore {
   updateSingleEvent = async (data) => {
     const token = localStorage.getItem('token');
     const result = await editEvent(token, data);
-    return result;
+    if (result === 'success') {
+      const updateModel = this.eventCollection.get(data.id);
+      updateModel.set({ title: data.title });
+      this.eventCollection.create(updateModel);
+    }
   }
 }
 
