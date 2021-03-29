@@ -34,7 +34,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint --ext .jsx --ext .js src/ -o ./test/report.txt",
     "build:rollup": "rollup -c rollup.config.js -w",
-    "build:webpack": "serve -s build -l 3000"
+    "build:webpack": "npm run build && serve -s build -l 3000"
   },
   "eslintConfig": {
     "extends": [
@@ -68,6 +68,7 @@
     "rollup": "^2.41.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.0"
+    "rollup-plugin-postcss": "^4.0.0",
+    "serve": "^11.3.2"
   }
 }
