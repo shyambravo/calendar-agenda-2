@@ -47,20 +47,34 @@ const getEvents = async (token, cid, fromDate, toDate) => {
   }
   const result = await fetch(
     `${process.env.REACT_APP_BACKEND_URL}/getEventList/${token}/${cid}`, params,
-  ).then((res) => res.json());
-  return result.events;
-};
-
-const getCalendarId = async (token, name) => {
-  verifyToken();
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendarName/${token}/${name}`).then((res) => res.json()).catch(() => 0);
-  return result;
+  ).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    } if (res.status === 401) {
+      return 1;
+    }
+    return 0;
+  });
+  if (result !== 0 && result !== 1) {
+    return result.events;
+  }
+  return 0;
 };
 
 const getCalendars = async (token) => {
   verifyToken();
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendars/${token}`).then((res) => res.json()).catch(() => 0);
-  return result;
+  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendars/${token}`).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    } if (res.status === 401) {
+      return 0;
+    }
+    return 1;
+  });
+  if (result !== 0 && result !== 1) {
+    return result;
+  }
+  return 0;
 };
 
 const editEvent = async (token, data) => {
@@ -76,12 +90,11 @@ const editEvent = async (token, data) => {
   return result;
 };
 
-// const checkToken = async (token) => {
-// eslint-disable-next-line max-len
-//   const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getnewtoken/${token}`).then((res) => res.json()).catch(() => 0);
-//   return result;
-// };
+const getnewtoken = async (refreshToken) => {
+  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getnewtoken/${refreshToken}/${process.env.REACT_APP_CLIENT_ID}/${process.env.REACT_APP_CLIENT_SECRET}`).then((res) => res.json()).catch(() => 0);
+  return result;
+};
 
 export {
-  getEvents, getAccessToken, getCalendarId, getCalendars, editEvent, verifyToken,
+  getEvents, getAccessToken, getCalendars, editEvent, verifyToken, getnewtoken,
 };

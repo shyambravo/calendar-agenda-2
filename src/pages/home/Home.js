@@ -16,7 +16,9 @@ import DayView from './DayView';
 import CalendarStore from '../../store/calendar';
 import pkg from '../../../package.json';
 
-import { getEvents, getAccessToken, getCalendars } from '../../services/Events';
+import {
+  getEvents, getAccessToken, getCalendars, getnewtoken,
+} from '../../services/Events';
 
 export default class Home extends Component {
   constructor(props) {
@@ -48,16 +50,23 @@ export default class Home extends Component {
 
   async componentDidMount() {
     const { location } = this.props;
-    const parsed = queryString.parse(location.search).code;
+    let refreshToken = localStorage.getItem('refreshToken');
     let token;
     let tokenTime;
-
-    token = await getAccessToken(parsed);
-    token = JSON.parse(token);
-    token = token.access_token;
+    if (refreshToken !== null) {
+      const newToken = await getnewtoken(refreshToken);
+      token = newToken.access_token;
+    } else {
+      const parsed = queryString.parse(location.search).code;
+      token = await getAccessToken(parsed);
+      token = JSON.parse(token);
+      refreshToken = token.refresh_token;
+      token = token.access_token;
+    }
     tokenTime = moment().format('YYYY MM DD, h:mm:ss');
     tokenTime = moment(tokenTime, 'YYYY MM DD, h:mm:ss').add(3500, 'seconds');
     sessionStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
     sessionStorage.setItem('tokenTime', moment(tokenTime).format('YYYY MM DD, h:mm:ss'));
 
     this.setState({
@@ -68,12 +77,17 @@ export default class Home extends Component {
       calendarList: [],
       isLoading: false,
     });
-    if (result.calendars && result.calendars.length > 0) {
-      const calendarStore = new CalendarStore(result.calendars);
-      this.setState({
-        calendarStore,
-        calendarList: calendarStore.calendarCollection.toJSON(),
-      });
+    if (result !== 0) {
+      if (result.calendars && result.calendars.length > 0) {
+        const calendarStore = new CalendarStore(result.calendars);
+        this.setState({
+          calendarStore,
+          calendarList: calendarStore.calendarCollection.toJSON(),
+        });
+      }
+    } else {
+      alert('invalid token');
+      window.location = 'http://localhost:3000';
     }
   }
 
@@ -207,20 +221,25 @@ export default class Home extends Component {
       && Math.abs(a.diff(b, 'day')) < 30
     ) {
       const events = await getEvents(token, calendarId, start, end);
-      if (events[0].message === 'No events found.') {
-        alert('No events found');
-        const temp = new EventStore([], this.updateCollection);
-        this.setState({
-          eventList: temp.eventCollection.toJSON(),
-          eventStore: temp,
-        });
+      if (events !== 0) {
+        if (events[0].message === 'No events found.') {
+          alert('No events found');
+          const temp = new EventStore([], this.updateCollection);
+          this.setState({
+            eventList: temp.eventCollection.toJSON(),
+            eventStore: temp,
+          });
+        } else {
+          const temp = new EventStore(events, this.updateCollection);
+          const sortedArray = this.sortArrayByDate(temp.eventCollection.toJSON());
+          this.setState({
+            eventList: sortedArray,
+            eventStore: temp,
+          });
+        }
       } else {
-        const temp = new EventStore(events, this.updateCollection);
-        const sortedArray = this.sortArrayByDate(temp.eventCollection.toJSON());
-        this.setState({
-          eventList: sortedArray,
-          eventStore: temp,
-        });
+        alert('Token Expired');
+        window.location = 'http://localhost:3000';
       }
     } else {
       alert('No calendar selected');
