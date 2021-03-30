@@ -49,22 +49,16 @@ export default class Home extends Component {
   async componentDidMount() {
     const { location } = this.props;
     const parsed = queryString.parse(location.search).code;
-    let token = localStorage.getItem('token');
-    let tokenTime = localStorage.getItem('tokenTime');
-    if (token === null) {
-      token = await getAccessToken(parsed);
-      tokenTime = moment().format('YYYY MM DD, h:mm:ss');
-      tokenTime = moment(tokenTime, 'YYYY MM DD, h:mm:ss').add(3600, 'seconds');
-      localStorage.setItem('token', token);
-      localStorage.setItem('tokenTime', tokenTime);
-    } else {
-      const currentTime = moment().format('YYYY MM DD, h:mm:ss');
-      if (!moment(currentTime, 'YYYY MM DD, h:mm:ss').isBefore(moment(tokenTime, 'YYYY MM DD, h:mm:ss'))) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('tokenTime');
-        window.location = 'http://localhost:3000/';
-      }
-    }
+    let token;
+    let tokenTime;
+
+    token = await getAccessToken(parsed);
+    token = JSON.parse(token);
+    token = token.access_token;
+    tokenTime = moment().format('YYYY MM DD, h:mm:ss');
+    tokenTime = moment(tokenTime, 'YYYY MM DD, h:mm:ss').add(3500, 'seconds');
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('tokenTime', moment(tokenTime).format('YYYY MM DD, h:mm:ss'));
 
     this.setState({
       token,
