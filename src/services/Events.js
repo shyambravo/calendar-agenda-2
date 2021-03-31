@@ -78,17 +78,22 @@ const getCalendars = async (token) => {
 };
 
 const editEvent = async (data) => {
-  // console.log(data);
   verifyToken();
+  const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('YYYYMMDDTHHmmSSZZ');
+  const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('YYYYMMDDTHHmmSSZZ');
+  const { timezone } = data.dateandtime;
+
   const obj = {
     etag: data.etag,
     uid: data.uid,
     estatus: 'updated',
-    dateandtime: data.dateandtime,
+    dateandtime: { start: fromDate, end: toDate, timezone },
     title: data.title,
     cid: data.cid,
     color: data.color,
+    description: data.description,
   };
+
   // verifyToken();
   const token = sessionStorage.getItem('token');
   const params = {
@@ -119,6 +124,23 @@ const getnewtoken = async (refreshToken) => {
   return result;
 };
 
+const fetcheventdetails = async (cid, eid) => {
+  verifyToken();
+  const token = sessionStorage.getItem('token');
+  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/geteventdetails/${token}/${cid}/${eid}`).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    } if (res.status === 401) {
+      return 1;
+    }
+    return 0;
+  });
+  if (result !== 1 && result !== 0) {
+    return result;
+  }
+  return 0;
+};
+
 export {
-  getEvents, getAccessToken, getCalendars, editEvent, verifyToken, getnewtoken,
+  getEvents, getAccessToken, getCalendars, editEvent, verifyToken, getnewtoken, fetcheventdetails,
 };

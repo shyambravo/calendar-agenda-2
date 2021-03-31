@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import { Input } from '@material-ui/core';
+import { fetcheventdetails } from '../../services/Events';
 
 export default class DayView extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ export default class DayView extends Component {
       title: null,
       cid: null,
       color: '#ffff',
+      description: '',
     };
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
@@ -211,8 +213,17 @@ export default class DayView extends Component {
     });
   };
 
-  editEvent = (e) => {
+  editEvent = async (e) => {
     const { calColor } = this.props;
+    const { cid } = this.state;
+    const eventData = await fetcheventdetails(cid, e.id);
+    let description = '';
+    if (eventData) {
+      if (eventData.events[0].description !== undefined) {
+        description = eventData[0].description;
+      }
+    }
+
     this.setState({
       isModal: true,
       editEvent: e,
@@ -220,13 +231,14 @@ export default class DayView extends Component {
       toTime: e.toTime,
       title: e.title,
       color: e.color === '' ? calColor : e.color,
+      description,
     });
   };
 
-  editEventSubmit = () => {
+  editEventSubmit = async () => {
     const { store } = this.props;
     const {
-      title, fromTime, toTime, editEvent, cid, color,
+      title, fromTime, toTime, editEvent, cid, color, description,
     } = this.state;
     const data = {
       uid: editEvent.id,
@@ -237,6 +249,7 @@ export default class DayView extends Component {
       etag: editEvent.etag,
       cid,
       color,
+      description,
     };
     store.updateSingleEvent(data);
     this.setState({
@@ -259,6 +272,10 @@ export default class DayView extends Component {
       this.setState({
         color: value,
       });
+    } else if (type === 'description') {
+      this.setState({
+        description: value,
+      });
     } else {
       this.setState({
         title: value,
@@ -277,6 +294,7 @@ export default class DayView extends Component {
       toTime,
       title,
       color,
+      description,
     } = this.state;
     const { calColor } = this.props;
     return (
@@ -290,6 +308,17 @@ export default class DayView extends Component {
           <div className="agenda-backdrop">
             <div className="agenda-modal">
               <h3>Edit Event</h3>
+              <TextField
+                id="description"
+                label="Description"
+                multiline
+                rows={4}
+                defaultValue="Event Description"
+                variant="outlined"
+                style={{ width: '100%' }}
+                value={description}
+                onChange={(e) => this.modalHandleChange('description', e)}
+              />
               <TextField
                 id="outlined-basic"
                 onChange={(e) => this.modalHandleChange('title', e)}
