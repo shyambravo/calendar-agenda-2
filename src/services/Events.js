@@ -23,7 +23,7 @@ const getAccessToken = async (code) => {
 };
 
 const getEvents = async (token, cid, fromDate, toDate) => {
-  verifyToken();
+  // verifyToken();
   let range = null;
   if (fromDate && toDate) {
     range = {
@@ -62,7 +62,7 @@ const getEvents = async (token, cid, fromDate, toDate) => {
 };
 
 const getCalendars = async (token) => {
-  verifyToken();
+  // verifyToken();
   const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendars/${token}`).then((res) => {
     if (res.status === 200) {
       return res.json();
@@ -77,17 +77,40 @@ const getCalendars = async (token) => {
   return 0;
 };
 
-const editEvent = async (token, data) => {
-  verifyToken();
+const editEvent = async (data) => {
+  // console.log(data);
+  // verifyToken();
+  const obj = {
+    etag: data.etag,
+    uid: data.uid,
+    estatus: 'updated',
+    dateandtime: data.dateandtime,
+    title: data.title,
+    cid: data.cid,
+  };
+  // verifyToken();
+  const token = sessionStorage.getItem('token');
   const params = {
     headers: {
       'Content-Type': 'application/json',
     },
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify(obj),
   };
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/editEvent/${token}`, params).then((res) => res.json()).catch(() => 0);
-  return result;
+  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/editEvent/${token}`, params).then((res) => {
+    if (res.status === 200) {
+      return res.json();
+    }
+    if (res.status === 401) {
+      return 1;
+    }
+    return 0;
+  });
+
+  if (result !== 1 && result !== 0) {
+    return result;
+  }
+  return 0;
 };
 
 const getnewtoken = async (refreshToken) => {

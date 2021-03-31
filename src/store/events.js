@@ -7,6 +7,7 @@ import { getEvents, editEvent } from '../services/Events';
 class EventStore {
   constructor(agenda, cb) {
     this.eventArray = [];
+    console.log(agenda);
     for (const data of agenda) {
       const startDate = moment(data.dateandtime.start).format(
         'dddd, MMMM Do YYYY, h:mm:ss a',
@@ -28,6 +29,8 @@ class EventStore {
           description: data.description ? data.description : null,
           attendees: data.attendees ? data.attendees : null,
           color: data.color,
+          etag: data.etag,
+          dateandtime: data.dateandtime,
         }),
       );
     }
@@ -64,6 +67,8 @@ class EventStore {
               description: data.description ? data.description : null,
               attendees: data.attendees ? data.attendees : null,
               color: data.color,
+              etag: data.etag,
+              dateandtime: data.dateandtime,
             }),
           );
         }
@@ -77,13 +82,21 @@ class EventStore {
   };
 
   updateSingleEvent = async (data) => {
-    const token = localStorage.getItem('token');
-    const result = await editEvent(token, data);
-    const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
-    const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
-    const updateModel = this.eventCollection.get(data.id);
-    updateModel.set({ title: data.title, fromDate, toDate });
-    this.eventCollection.create(updateModel);
+    console.log(data);
+    const result = await editEvent(data);
+    if (result !== 0) {
+      const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+      const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+      const updateModel = this.eventCollection.get(data.id);
+      const etag = result;
+      updateModel.set({
+        title: data.title, fromDate, toDate, etag,
+      });
+      this.eventCollection.create(updateModel);
+    } else {
+      alert('Token Expied');
+      window.location('http://localhost:3000');
+    }
     return result;
   }
 }

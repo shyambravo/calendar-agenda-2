@@ -21,6 +21,7 @@ export default class DayView extends Component {
       fromTime: null,
       toTime: null,
       title: null,
+      cid: null,
     };
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
@@ -57,16 +58,17 @@ export default class DayView extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { eventList } = this.props;
+    const { eventList, cid } = this.props;
     if (prevProps.eventList !== eventList && eventList) {
-      this.storePosition(eventList);
+      this.storePosition(eventList, cid);
     }
   }
 
-  storePosition = (eventList) => {
+  storePosition = (eventList, cid) => {
     // This funcion creates an array of objects with keys for width and positioning
     this.setState({
       isLoading: true,
+      cid,
     });
     const temp = [];
     if (eventList.forEach) {
@@ -119,6 +121,8 @@ export default class DayView extends Component {
           color: e.color,
           fromTime,
           toTime,
+          dateandtime: e.dateandtime,
+          etag: e.etag,
         };
         temp.push(obj);
       });
@@ -218,13 +222,16 @@ export default class DayView extends Component {
   editEventSubmit = () => {
     const { store } = this.props;
     const {
-      title, fromTime, toTime, editEvent,
+      title, fromTime, toTime, editEvent, cid,
     } = this.state;
     const data = {
-      id: editEvent.id,
+      uid: editEvent.id,
       title,
       fromTime,
       toTime,
+      dateandtime: editEvent.dateandtime,
+      etag: editEvent.etag,
+      cid,
     };
     store.updateSingleEvent(data);
   }
