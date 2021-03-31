@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
+import { Input } from '@material-ui/core';
 
 export default class DayView extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class DayView extends Component {
       toTime: null,
       title: null,
       cid: null,
+      color: '#ffff',
     };
     this.storePosition = this.storePosition.bind(this);
     this.sortByDate = this.sortByDate.bind(this);
@@ -210,19 +212,21 @@ export default class DayView extends Component {
   };
 
   editEvent = (e) => {
+    const { calColor } = this.props;
     this.setState({
       isModal: true,
       editEvent: e,
       fromTime: e.fromTime,
       toTime: e.toTime,
       title: e.title,
+      color: e.color === '' ? calColor : e.color,
     });
   };
 
   editEventSubmit = () => {
     const { store } = this.props;
     const {
-      title, fromTime, toTime, editEvent, cid,
+      title, fromTime, toTime, editEvent, cid, color,
     } = this.state;
     const data = {
       uid: editEvent.id,
@@ -232,8 +236,13 @@ export default class DayView extends Component {
       dateandtime: editEvent.dateandtime,
       etag: editEvent.etag,
       cid,
+      color,
     };
     store.updateSingleEvent(data);
+    this.setState({
+      isModal: false,
+      isLoading: true,
+    });
   }
 
   modalHandleChange = (type, e) => {
@@ -245,6 +254,10 @@ export default class DayView extends Component {
     } else if (type === 'totime') {
       this.setState({
         toTime: value,
+      });
+    } else if (type === 'color') {
+      this.setState({
+        color: value,
       });
     } else {
       this.setState({
@@ -263,6 +276,7 @@ export default class DayView extends Component {
       fromTime,
       toTime,
       title,
+      color,
     } = this.state;
     const { calColor } = this.props;
     return (
@@ -308,22 +322,29 @@ export default class DayView extends Component {
                   shrink: true,
                 }}
               />
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ width: '45%', marginRight: '10%' }}
-                onClick={() => this.editEventSubmit()}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ width: '45%' }}
-                onClick={() => this.setState({ isModal: false })}
-              >
-                Close
-              </Button>
+              <div className="color-picker-container">
+                <Input type="color" variant="outlined" className="color-picker" placeholder="select color" onChange={(e) => this.modalHandleChange('color', e)} value={color} />
+                <p>select color</p>
+              </div>
+              <div className="modal-buttons">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ width: '45%', marginRight: '10%' }}
+                  onClick={() => this.editEventSubmit()}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ width: '45%' }}
+                  onClick={() => this.setState({ isModal: false })}
+                >
+                  Close
+                </Button>
+              </div>
+
             </div>
           </div>
         )}

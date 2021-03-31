@@ -7,7 +7,6 @@ import { getEvents, editEvent } from '../services/Events';
 class EventStore {
   constructor(agenda, cb) {
     this.eventArray = [];
-    console.log(agenda);
     for (const data of agenda) {
       const startDate = moment(data.dateandtime.start).format(
         'dddd, MMMM Do YYYY, h:mm:ss a',
@@ -82,20 +81,21 @@ class EventStore {
   };
 
   updateSingleEvent = async (data) => {
-    console.log(data);
     const result = await editEvent(data);
-    if (result !== 0) {
-      const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
-      const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
-      const updateModel = this.eventCollection.get(data.id);
-      const etag = result;
-      updateModel.set({
-        title: data.title, fromDate, toDate, etag,
-      });
-      this.eventCollection.create(updateModel);
+    if (result !== 0 && result.events) {
+      if (result.events.length > 0) {
+        const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+        const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+        const updateModel = this.eventCollection.get(data.uid);
+        const { etag } = result.events[0];
+        updateModel.set({
+          title: data.title, fromDate, toDate, etag, color: data.color,
+        });
+        this.eventCollection.create(updateModel);
+      }
     } else {
       alert('Token Expied');
-      window.location('http://localhost:3000');
+      window.location = 'http://localhost:3000';
     }
     return result;
   }

@@ -148,7 +148,6 @@ export default class Home extends Component {
     });
     const result = await eventStore.updateEvents(start, end, cid, token);
     const sortedArray = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
-    console.log(sortedArray);
     if (result === false) {
       alert('No Events found.');
       this.setState({

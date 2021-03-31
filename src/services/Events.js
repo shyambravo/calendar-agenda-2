@@ -87,6 +87,7 @@ const editEvent = async (data) => {
     dateandtime: data.dateandtime,
     title: data.title,
     cid: data.cid,
+    color: data.color,
   };
   // verifyToken();
   const token = sessionStorage.getItem('token');

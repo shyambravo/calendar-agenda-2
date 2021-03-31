@@ -14,7 +14,7 @@ export default class Authorization extends Component {
     if (refreshToken !== null) {
       window.location = 'http://127.0.0.1:3000/home';
     } else {
-      window.location = `https://accounts.zoho.com/oauth/v2/auth?scope=ZohoCalendar.calendar.READ%2CZohoCalendar.event.READ&client_id=${process.env.REACT_APP_CLIENT_ID}&response_type=code&redirect_uri=http://127.0.0.1:3000/home&access_type=offline&prompt=consent`;
+      window.location = `https://accounts.zoho.com/oauth/v2/auth?scope=ZohoCalendar.calendar.ALL%2CZohoCalendar.event.ALL&client_id=${process.env.REACT_APP_CLIENT_ID}&response_type=code&redirect_uri=http://127.0.0.1:3000/home&access_type=offline&prompt=consent`;
     }
   };
 
