@@ -63,11 +63,11 @@ export default class Home extends Component {
       refreshToken = token.refresh_token;
       token = token.access_token;
     }
-    tokenTime = moment().format('YYYY MM DD, h:mm:ss');
-    tokenTime = moment(tokenTime, 'YYYY MM DD, h:mm:ss').add(3500, 'seconds');
+    tokenTime = moment().format('YYYY MM DD, HH:mm:ss');
+    tokenTime = moment(tokenTime, 'YYYY MM DD, HH:mm:ss').add(3500, 'seconds');
     sessionStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
-    sessionStorage.setItem('tokenTime', moment(tokenTime).format('YYYY MM DD, h:mm:ss'));
+    sessionStorage.setItem('tokenTime', moment(tokenTime).format('YYYY MM DD, HH:mm:ss'));
 
     this.setState({
       token,
@@ -207,8 +207,6 @@ export default class Home extends Component {
       token, cid, fromDate, toDate, calendarStore,
     } = this.state;
     const calendarId = cid;
-    let calendarColor = calendarStore.calendarCollection.get(cid);
-    calendarColor = calendarColor.toJSON().color;
     const start = moment(fromDate).format('YYYYMMDD');
     const end = moment(toDate).format('YYYYMMDD');
     const a = moment(start);
@@ -220,6 +218,8 @@ export default class Home extends Component {
       && toDate
       && Math.abs(a.diff(b, 'day')) < 30
     ) {
+      let calendarColor = calendarStore.calendarCollection.get(cid);
+      calendarColor = calendarColor.toJSON().color;
       const events = await getEvents(token, calendarId, start, end);
       if (events !== 0) {
         if (events[0].message === 'No events found.') {
@@ -228,6 +228,7 @@ export default class Home extends Component {
           this.setState({
             eventList: temp.eventCollection.toJSON(),
             eventStore: temp,
+            calColor: calendarColor,
           });
         } else {
           const temp = new EventStore(events, this.updateCollection);
@@ -235,6 +236,7 @@ export default class Home extends Component {
           this.setState({
             eventList: sortedArray,
             eventStore: temp,
+            calColor: calendarColor,
           });
         }
       } else {
@@ -246,7 +248,6 @@ export default class Home extends Component {
     }
     this.setState({
       isLoading: false,
-      calColor: calendarColor,
     });
   };
 

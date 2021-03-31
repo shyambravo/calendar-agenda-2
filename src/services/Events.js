@@ -3,8 +3,8 @@ import moment from 'moment';
 
 const verifyToken = () => {
   const tokenTime = sessionStorage.getItem('tokenTime');
-  const currentTime = moment().format('YYYY MM DD, h:mm:ss');
-  if (moment(currentTime, 'YYYY MM DD, h:mm:ss').isBefore(moment(tokenTime, 'YYYY MM DD, h:mm:ss'))) {
+  const currentTime = moment().format('YYYY MM DD, HH:mm:ss');
+  if (moment(currentTime, 'YYYY MM DD, HH:mm:ss').isBefore(moment(tokenTime, 'YYYY MM DD, HH:mm:ss'))) {
     return true;
   }
   alert('Token expired');
@@ -23,7 +23,7 @@ const getAccessToken = async (code) => {
 };
 
 const getEvents = async (token, cid, fromDate, toDate) => {
-  // verifyToken();
+  verifyToken();
   let range = null;
   if (fromDate && toDate) {
     range = {
@@ -62,7 +62,7 @@ const getEvents = async (token, cid, fromDate, toDate) => {
 };
 
 const getCalendars = async (token) => {
-  // verifyToken();
+  verifyToken();
   const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendars/${token}`).then((res) => {
     if (res.status === 200) {
       return res.json();
@@ -79,7 +79,7 @@ const getCalendars = async (token) => {
 
 const editEvent = async (data) => {
   // console.log(data);
-  // verifyToken();
+  verifyToken();
   const obj = {
     etag: data.etag,
     uid: data.uid,
