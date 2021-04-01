@@ -101,12 +101,26 @@
   list-style: disc;
   color: green;
   margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-gap: 20px;
 }
 
 .agenda-title-list {
   padding: 0;
   width: 100px;
 }
+
+.agenda-date-expand {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.agenda-date-content {
+  margin-left: 20px;
+}
+
 
 .title-list {
   list-style: none;
@@ -115,6 +129,7 @@
 }
 .time-list p {
   color: #3c4043;
+  text-overflow: ellipsis;
 }
 .agenda-date {
   width: 200px;
@@ -122,9 +137,6 @@
 .agenda-data {
   width: 100%;
   margin-left: 30px;
-  display: grid;
-  grid-template-columns: auto auto;
-  justify-content: space-around;
 }
 
 .agenda-data p {
@@ -136,11 +148,9 @@
 }
 
 .agenda-title {
-  width: 100%;
-  margin-left: 20px;
-  justify-self: flex-end;
+  max-width: 100%;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
 }
 
 .backdrop {
