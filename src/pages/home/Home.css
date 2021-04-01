@@ -100,7 +100,6 @@
 .time-list {
   list-style: disc;
   color: green;
-  margin-bottom: 20px;
   display: grid;
   grid-template-columns: 50% 50%;
   grid-gap: 20px;
