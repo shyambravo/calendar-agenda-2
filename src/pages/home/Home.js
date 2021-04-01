@@ -147,14 +147,14 @@ export default class Home extends Component {
       isLoading: true,
     });
     const result = await eventStore.updateEvents(start, end, cid, token);
-    const sortedArray = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
     if (result === false) {
       alert('No Events found.');
       this.setState({
-        eventList: sortedArray,
+        eventList: [],
         isLoading: false,
       });
     } else {
+      const sortedArray = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
       this.setState({
         eventList: sortedArray,
         isLoading: false,
@@ -246,7 +246,7 @@ export default class Home extends Component {
         window.location = 'http://localhost:3000';
       }
     } else {
-      alert('No calendar selected');
+      alert('No calendar/date selected');
     }
     this.setState({
       isLoading: false,
@@ -257,6 +257,8 @@ export default class Home extends Component {
     this.setState({
       page: newValue,
       eventList: [],
+      fromDate: '',
+      toDate: '',
     });
   };
 

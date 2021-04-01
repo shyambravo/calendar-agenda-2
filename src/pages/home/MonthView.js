@@ -121,6 +121,7 @@ export default class MonthView extends Component {
     const {
       isModal, title, description, fromTime, toTime, color, eventList,
     } = this.state;
+    let temp = 1;
     return (
       <div className="agenda-listing">
         {isModal && (
@@ -150,6 +151,8 @@ export default class MonthView extends Component {
                           className="time-list"
                           key={`time ${index2}`}
                           onClick={() => this.editEventTrigger(time)}
+                          // eslint-disable-next-line no-plusplus
+                          tabIndex={temp++}
                         >
                           <div className="agenda-date-expand">
                             <FiberManualRecordIcon />

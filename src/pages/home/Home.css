@@ -110,6 +110,11 @@
   background-color: rgba(141, 188, 219, 0.644);
 }
 
+.time-list:focus {
+  outline: none;
+  background-color: rgba(141, 188, 219, 0.644);
+}
+
 .agenda-title-list {
   padding: 0;
   width: 100px;
@@ -255,6 +260,11 @@
   transition: transform .2s;
 }
 .grid-absolute:hover {
+  transform: scale(1.05);
+}
+
+.grid-absolute:focus {
+  outline: none;
   transform: scale(1.05);
 }
 

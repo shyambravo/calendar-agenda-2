@@ -281,6 +281,7 @@ export default class DayView extends Component {
       description,
     } = this.state;
     const { calColor } = this.props;
+    let temp = 1;
     return (
       <div className="day-container">
         {isLoading && (
@@ -314,6 +315,8 @@ export default class DayView extends Component {
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 onClick={() => this.editEvent(event)}
+                // eslint-disable-next-line no-plusplus
+                tabIndex={temp++}
               >
                 <p>{event.title}</p>
               </div>
