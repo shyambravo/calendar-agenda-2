@@ -104,6 +104,11 @@
   display: grid;
   grid-template-columns: 50% 50%;
   grid-gap: 20px;
+  border-radius: 8px;
+}
+
+.time-list:hover {
+  background-color: rgba(141, 188, 219, 0.644);
 }
 
 .agenda-title-list {
@@ -248,4 +253,9 @@
   border: 1px solid whitesmoke;
   border-top: 0;
   border-bottom: 0;
+  transition: transform .2s;
 }
+.grid-absolute:hover {
+  transform: scale(1.05);
+}
+

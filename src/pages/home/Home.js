@@ -128,11 +128,11 @@ export default class Home extends Component {
   storeByKeys = (arr) => {
     const eventObj = {};
     for (let i = 0; i < arr.length; i += 1) {
-      if (Object.prototype.hasOwnProperty.call(eventObj, arr[i].date)) {
-        eventObj[arr[i].date].push(arr[i]);
+      if (Object.prototype.hasOwnProperty.call(eventObj, arr[i].dateSort)) {
+        eventObj[arr[i].dateSort].push(arr[i]);
       } else {
-        eventObj[`${arr[i].date}`] = [];
-        eventObj[`${arr[i].date}`].push(arr[i]);
+        eventObj[`${arr[i].dateSort}`] = [];
+        eventObj[`${arr[i].dateSort}`].push(arr[i]);
       }
     }
     this.setState({
@@ -162,11 +162,13 @@ export default class Home extends Component {
     }
   }
 
-  updateCollection = () => {
+  updateCollection = async () => {
     const { eventStore } = this.state;
     this.setState({
       eventList: eventStore.eventCollection.toJSON(),
     });
+    const result = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
+    this.storeByKeys(result);
   }
 
   filterByDate = async () => {
@@ -356,7 +358,7 @@ export default class Home extends Component {
               </Tabs>
             </div>
             {page === 0 ? (
-              <MonthView eventList={eventObj} />
+              <MonthView eventList={eventObj} store={eventStore} calColor={calColor} cid={cid} />
             ) : (
               <DayView eventList={eventList} store={eventStore} calColor={calColor} cid={cid} />
             )}

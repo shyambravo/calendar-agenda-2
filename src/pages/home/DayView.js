@@ -5,11 +5,11 @@ import React, { Component } from 'react';
 import './Home.css';
 import Card from '@material-ui/core/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+
 import moment from 'moment';
-import { Input } from '@material-ui/core';
+
 import { fetcheventdetails } from '../../services/Events';
+import EditModal from '../../components/EditModal/EditModal';
 
 export default class DayView extends Component {
   constructor(props) {
@@ -32,8 +32,8 @@ export default class DayView extends Component {
     this.findConflict = this.findConflict.bind(this);
     this.recursiveFunction = this.recursiveFunction.bind(this);
     this.editEvent = this.editEvent.bind(this);
-    this.modalHandleChange = this.modalHandleChange.bind(this);
     this.editEventSubmit = this.editEventSubmit.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
@@ -235,11 +235,9 @@ export default class DayView extends Component {
     });
   };
 
-  editEventSubmit = async () => {
+  editEventSubmit = async (title, color, description, fromTime, toTime) => {
     const { store } = this.props;
-    const {
-      title, fromTime, toTime, editEvent, cid, color, description,
-    } = this.state;
+    const { editEvent, cid } = this.state;
     const data = {
       uid: editEvent.id,
       title,
@@ -253,35 +251,21 @@ export default class DayView extends Component {
     };
     store.updateSingleEvent(data);
     this.setState({
+      title,
+      description,
+      color,
+      fromTime,
+      toTime,
       isModal: false,
       isLoading: true,
     });
-  }
-
-  modalHandleChange = (type, e) => {
-    const { value } = e.target;
-    if (type === 'fromtime') {
-      this.setState({
-        fromTime: value,
-      });
-    } else if (type === 'totime') {
-      this.setState({
-        toTime: value,
-      });
-    } else if (type === 'color') {
-      this.setState({
-        color: value,
-      });
-    } else if (type === 'description') {
-      this.setState({
-        description: value,
-      });
-    } else {
-      this.setState({
-        title: value,
-      });
-    }
   };
+
+  closeModal = () => {
+    this.setState({
+      isModal: false,
+    });
+  }
 
   render() {
     const {
@@ -305,77 +289,15 @@ export default class DayView extends Component {
           </div>
         )}
         {isModal && (
-          <div className="agenda-backdrop">
-            <div className="agenda-modal">
-              <h3>Edit Event</h3>
-              <TextField
-                id="description"
-                label="Description"
-                multiline
-                rows={4}
-                defaultValue="Event Description"
-                variant="outlined"
-                style={{ width: '100%' }}
-                value={description}
-                onChange={(e) => this.modalHandleChange('description', e)}
-              />
-              <TextField
-                id="outlined-basic"
-                onChange={(e) => this.modalHandleChange('title', e)}
-                value={title}
-                label="Title"
-                variant="outlined"
-                className="agenda-modal-input"
-              />
-              <TextField
-                id="outlined-basic"
-                label="FromTime"
-                variant="outlined"
-                type="datetime-local"
-                className="agenda-modal-input"
-                value={fromTime}
-                onChange={(e) => this.modalHandleChange('fromtime', e)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                id="outlined-basic"
-                label="ToTime"
-                variant="outlined"
-                type="datetime-local"
-                className="agenda-modal-input"
-                onChange={(e) => this.modalHandleChange('totime', e)}
-                value={toTime}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <div className="color-picker-container">
-                <Input type="color" variant="outlined" className="color-picker" placeholder="select color" onChange={(e) => this.modalHandleChange('color', e)} value={color} />
-                <p>select color</p>
-              </div>
-              <div className="modal-buttons">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ width: '45%', marginRight: '10%' }}
-                  onClick={() => this.editEventSubmit()}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ width: '45%' }}
-                  onClick={() => this.setState({ isModal: false })}
-                >
-                  Close
-                </Button>
-              </div>
-
-            </div>
-          </div>
+          <EditModal
+            fromTime={fromTime}
+            toTime={toTime}
+            title={title}
+            color={color}
+            description={description}
+            editEventSubmit={this.editEventSubmit}
+            closeModal={this.closeModal}
+          />
         )}
         <div className="absolute-container">
           {events

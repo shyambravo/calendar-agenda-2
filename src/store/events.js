@@ -15,7 +15,7 @@ class EventStore {
         'dddd, MMMM Do YYYY, h:mm:ss a',
       );
       const date = moment(data.dateandtime.start).format('YYYY-MM-DD');
-      const unixDate = moment(date, 'YYYY-MM-DD').format('x');
+      const unixDate = moment(startDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('x');
       this.eventArray.push(
         new Event({
           id: data.uid,
@@ -30,6 +30,7 @@ class EventStore {
           color: data.color,
           etag: data.etag,
           dateandtime: data.dateandtime,
+          dateSort: date,
         }),
       );
     }
@@ -53,7 +54,7 @@ class EventStore {
             'dddd, MMMM Do YYYY, h:mm:ss a',
           );
           const date = moment(data.dateandtime.start).format('YYYY-MM-DD');
-          const unixDate = moment(date, 'YYYY-MM-DD').format('x');
+          const unixDate = moment(startDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('x');
           this.eventCollection.add(
             new Event({
               id: data.uid,
@@ -68,6 +69,7 @@ class EventStore {
               color: data.color,
               etag: data.etag,
               dateandtime: data.dateandtime,
+              dateSort: date,
             }),
           );
         }
@@ -86,10 +88,11 @@ class EventStore {
       if (result.events.length > 0) {
         const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
         const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('dddd, MMMM Do YYYY, h:mm:ss a');
+        const date = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('x');
         const updateModel = this.eventCollection.get(data.uid);
         const { etag } = result.events[0];
         updateModel.set({
-          title: data.title, fromDate, toDate, etag, color: data.color,
+          title: data.title, fromDate, toDate, etag, color: data.color, date,
         });
         this.eventCollection.create(updateModel);
       }
