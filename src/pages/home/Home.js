@@ -11,6 +11,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import AlertModal from '../../components/AlertModal/AlertModal';
 
 import EventStore from '../../store/events';
 import MonthView from './MonthView';
@@ -41,6 +42,8 @@ export default class Home extends Component {
       page: 0,
       eventObj: null,
       calColor: null,
+      alert: false,
+      alertMessage: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
@@ -93,7 +96,10 @@ export default class Home extends Component {
         });
       }
     } else {
-      alert('invalid token');
+      this.setState({
+        alert: true,
+        alertMessage: 'Token Expired',
+      });
       window.location = 'http://localhost:3000';
     }
   }
@@ -148,10 +154,11 @@ export default class Home extends Component {
     });
     const result = await eventStore.updateEvents(start, end, cid, token);
     if (result === false) {
-      alert('No Events found.');
       this.setState({
         eventList: [],
         isLoading: false,
+        alert: true,
+        alertMessage: 'No events found',
       });
     } else {
       const sortedArray = await this.storeByKeys(
@@ -192,12 +199,18 @@ export default class Home extends Component {
       ) {
         this.filterRange(eventStore, start, end, cid, token);
       } else {
-        alert('No calendar is selected or improper date');
+        this.setState({
+          alert: true,
+          alertMessage: 'No calendar is selected or improper date',
+        });
       }
     } else if (cid !== '0' && token && fromDate) {
       this.filterRange(eventStore, start, start, cid, token);
     } else {
-      alert('No calendar is selected or improper date');
+      this.setState({
+        alert: true,
+        alertMessage: 'No calendar is selected or improper date',
+      });
     }
   };
 
@@ -225,7 +238,10 @@ export default class Home extends Component {
       const events = await getEvents(token, calendarId, start, end);
       if (events !== 0) {
         if (events[0].message === 'No events found.') {
-          alert('No events found');
+          this.setState({
+            alert: true,
+            alertMessage: 'No events found',
+          });
           const temp = new EventStore([], this.updateCollection);
           this.setState({
             eventList: temp.eventCollection.toJSON(),
@@ -242,11 +258,17 @@ export default class Home extends Component {
           });
         }
       } else {
-        alert('Token Expired');
+        this.setState({
+          alert: true,
+          alertMessage: 'Token expired',
+        });
         window.location = 'http://localhost:3000';
       }
     } else {
-      alert('No calendar/date selected');
+      this.setState({
+        alert: true,
+        alertMessage: 'No calendar/date is selected',
+      });
     }
     this.setState({
       isLoading: false,
@@ -272,6 +294,8 @@ export default class Home extends Component {
       eventObj,
       eventStore,
       calColor,
+      alert,
+      alertMessage,
     } = this.state;
     return (
       <div className="home-container">
@@ -279,6 +303,16 @@ export default class Home extends Component {
           <div className="backdrop">
             <CircularProgress disableShrink className="loader" />
           </div>
+        )}
+        {alert && (
+          <AlertModal
+            message={alertMessage}
+            closeModal={() => {
+              this.setState({
+                alert: false,
+              });
+            }}
+          />
         )}
         <div className="home-header">
           <h3>{`Calendar Demo V-${pkg.version}`}</h3>
@@ -320,16 +354,24 @@ export default class Home extends Component {
                   <Grid container spacing={3} justify="flex-end">
                     <Grid item xs={12} sm={6}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <DatePicker value={fromDate} onChange={this.handleFromDate} label="FromDate" tabIndex={0} />
+                        <DatePicker
+                          value={fromDate}
+                          onChange={this.handleFromDate}
+                          label="FromDate"
+                          tabIndex={0}
+                        />
                       </MuiPickersUtilsProvider>
-
                     </Grid>
                     {page === 0 && (
                       <Grid item xs={12} sm={6}>
                         <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <DatePicker value={toDate} onChange={this.handleToDate} label="ToDate" tabIndex={0} />
+                          <DatePicker
+                            value={toDate}
+                            onChange={this.handleToDate}
+                            label="ToDate"
+                            tabIndex={0}
+                          />
                         </MuiPickersUtilsProvider>
-
                       </Grid>
                     )}
                   </Grid>
