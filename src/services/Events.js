@@ -48,15 +48,10 @@ const getEvents = async (token, cid, fromDate, toDate) => {
   const result = await fetch(
     `${process.env.REACT_APP_BACKEND_URL}/getEventList/${token}/${cid}`, params,
   ).then((res) => {
-    if (res.status === 200) {
-      return res.json();
-    } if (res.status === 401) {
-      return 1;
-    }
-    return 0;
+    res.JSON();
   });
   if (result !== 0 && result !== 1) {
-    return result;
+    return result.events;
   }
   return 0;
 };
