@@ -45,6 +45,7 @@ class EventStore {
     const eventArray = await getEvents(token, cid, fromDate, toDate);
     if (eventArray !== 0) {
       this.eventCollection.reset();
+      this.eventArray = [];
       if (eventArray.length > 0 && eventArray[0].message !== 'No events found.') {
         for (const data of eventArray) {
           const startDate = moment(data.dateandtime.start).format(
@@ -55,7 +56,7 @@ class EventStore {
           );
           const date = moment(data.dateandtime.start).format('YYYY-MM-DD');
           const unixDate = moment(startDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format('x');
-          this.eventCollection.add(
+          this.eventArray.push(
             new Event({
               id: data.uid,
               title: data.title,
@@ -73,6 +74,7 @@ class EventStore {
             }),
           );
         }
+        this.eventCollection.add(this.eventArray);
         return true;
       }
     } else {

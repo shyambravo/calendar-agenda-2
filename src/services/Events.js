@@ -56,7 +56,7 @@ const getEvents = async (token, cid, fromDate, toDate) => {
     return 0;
   });
   if (result !== 0 && result !== 1) {
-    return result.events;
+    return result;
   }
   return 0;
 };

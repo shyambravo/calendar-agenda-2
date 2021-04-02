@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Home.css';
-import TextField from '@material-ui/core/TextField';
 import moment from 'moment';
 import queryString from 'query-string';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -10,6 +9,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
+
 import EventStore from '../../store/events';
 import MonthView from './MonthView';
 import DayView from './DayView';
@@ -17,7 +19,10 @@ import CalendarStore from '../../store/calendar';
 import pkg from '../../../package.json';
 
 import {
-  getEvents, getAccessToken, getCalendars, getnewtoken,
+  getEvents,
+  getAccessToken,
+  getCalendars,
+  getnewtoken,
 } from '../../services/Events';
 
 export default class Home extends Component {
@@ -43,7 +48,6 @@ export default class Home extends Component {
     this.handleToDate = this.handleToDate.bind(this);
     this.handlePageClick = this.handlePageClick.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
-    this.sortArrayByDate = this.sortArrayByDate.bind(this);
     this.storeByKeys = this.storeByKeys.bind(this);
     this.updateCollection = this.updateCollection.bind(this);
   }
@@ -67,7 +71,10 @@ export default class Home extends Component {
     tokenTime = moment(tokenTime, 'YYYY MM DD, HH:mm:ss').add(3500, 'seconds');
     sessionStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
-    sessionStorage.setItem('tokenTime', moment(tokenTime).format('YYYY MM DD, HH:mm:ss'));
+    sessionStorage.setItem(
+      'tokenTime',
+      moment(tokenTime).format('YYYY MM DD, HH:mm:ss'),
+    );
 
     this.setState({
       token,
@@ -103,7 +110,7 @@ export default class Home extends Component {
   handleFromDate = (e) => {
     this.setState(
       {
-        fromDate: e.target.value,
+        fromDate: e,
       },
       () => this.filterByDate(),
     );
@@ -112,18 +119,11 @@ export default class Home extends Component {
   handleToDate = (e) => {
     this.setState(
       {
-        toDate: e.target.value,
+        toDate: e,
       },
       () => this.filterByDate(),
     );
   };
-
-  sortArrayByDate = async (arr) => {
-    arr.sort((a, b) => a.date - b.date);
-    const result = await this.storeByKeys(arr);
-
-    return result;
-  }
 
   storeByKeys = (arr) => {
     const eventObj = {};
@@ -139,7 +139,7 @@ export default class Home extends Component {
       eventObj,
     });
     return arr;
-  }
+  };
 
   filterRange = async (eventStore, start, end, cid, token) => {
     this.setState({
@@ -154,22 +154,24 @@ export default class Home extends Component {
         isLoading: false,
       });
     } else {
-      const sortedArray = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
+      const sortedArray = await this.storeByKeys(
+        eventStore.eventCollection.toJSON(),
+      );
       this.setState({
         eventList: sortedArray,
         isLoading: false,
       });
     }
-  }
+  };
 
   updateCollection = async () => {
     const { eventStore } = this.state;
     this.setState({
       eventList: eventStore.eventCollection.toJSON(),
     });
-    const result = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
+    const result = await this.storeByKeys(eventStore.eventCollection.toJSON());
     this.storeByKeys(result);
-  }
+  };
 
   filterByDate = async () => {
     // eslint-disable-next-line react/no-access-state-in-setstate
@@ -192,9 +194,7 @@ export default class Home extends Component {
       } else {
         alert('No calendar is selected or improper date');
       }
-    } else if (cid !== '0'
-      && token
-      && fromDate) {
+    } else if (cid !== '0' && token && fromDate) {
       this.filterRange(eventStore, start, start, cid, token);
     } else {
       alert('No calendar is selected or improper date');
@@ -234,7 +234,7 @@ export default class Home extends Component {
           });
         } else {
           const temp = new EventStore(events, this.updateCollection);
-          const sortedArray = this.sortArrayByDate(temp.eventCollection.toJSON());
+          const sortedArray = this.storeByKeys(temp.eventCollection.toJSON());
           this.setState({
             eventList: sortedArray,
             eventStore: temp,
@@ -257,8 +257,6 @@ export default class Home extends Component {
     this.setState({
       page: newValue,
       eventList: [],
-      fromDate: '',
-      toDate: '',
     });
   };
 
@@ -320,27 +318,17 @@ export default class Home extends Component {
                 <Grid item xs={12} sm={6} lg={4} container>
                   <Grid container spacing={3} justify="flex-end">
                     <Grid item xs={12} sm={6}>
-                      <TextField
-                        label={page === 0 ? 'From Date' : 'Date'}
-                        variant="outlined"
-                        type="date"
-                        value={fromDate}
-                        onChange={this.handleFromDate}
-                        InputLabelProps={{ shrink: true }}
-                        className="calendar-input"
-                      />
+                      <MuiPickersUtilsProvider utils={MomentUtils}>
+                        <DatePicker value={fromDate} onChange={this.handleFromDate} label="FromDate" />
+                      </MuiPickersUtilsProvider>
+
                     </Grid>
                     {page === 0 && (
                       <Grid item xs={12} sm={6}>
-                        <TextField
-                          label="To Date"
-                          variant="outlined"
-                          type="date"
-                          value={toDate}
-                          onChange={this.handleToDate}
-                          InputLabelProps={{ shrink: true }}
-                          className="calendar-input"
-                        />
+                        <MuiPickersUtilsProvider utils={MomentUtils}>
+                          <DatePicker value={toDate} onChange={this.handleToDate} label="ToDate" />
+                        </MuiPickersUtilsProvider>
+
                       </Grid>
                     )}
                   </Grid>
@@ -360,9 +348,19 @@ export default class Home extends Component {
               </Tabs>
             </div>
             {page === 0 ? (
-              <MonthView eventList={eventObj} store={eventStore} calColor={calColor} cid={cid} />
+              <MonthView
+                eventList={eventObj}
+                store={eventStore}
+                calColor={calColor}
+                cid={cid}
+              />
             ) : (
-              <DayView eventList={eventList} store={eventStore} calColor={calColor} cid={cid} />
+              <DayView
+                eventList={eventList}
+                store={eventStore}
+                calColor={calColor}
+                cid={cid}
+              />
             )}
           </div>
         </div>
