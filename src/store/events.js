@@ -44,7 +44,6 @@ class EventStore {
   updateEvents = async (fromDate, toDate, cid, token) => {
     const eventArray = await getEvents(token, cid, fromDate, toDate);
     if (eventArray !== 0) {
-      this.eventCollection.reset();
       this.eventArray = [];
       if (eventArray.length > 0 && eventArray[0].message !== 'No events found.') {
         for (const data of eventArray) {
@@ -74,7 +73,7 @@ class EventStore {
             }),
           );
         }
-        this.eventCollection.add(this.eventArray);
+        this.eventCollection.reset(this.eventArray);
         return true;
       }
     } else {
