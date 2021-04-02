@@ -303,6 +303,7 @@ export default class Home extends Component {
                         labelId="calendar-name"
                         value={cid}
                         onChange={this.handleChange}
+                        tabIndex={0}
                       >
                         <MenuItem value="0">Select Calendar</MenuItem>
                         {calendarList.map((e) => (
@@ -319,14 +320,14 @@ export default class Home extends Component {
                   <Grid container spacing={3} justify="flex-end">
                     <Grid item xs={12} sm={6}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <DatePicker value={fromDate} onChange={this.handleFromDate} label="FromDate" />
+                        <DatePicker value={fromDate} onChange={this.handleFromDate} label="FromDate" tabIndex={0} />
                       </MuiPickersUtilsProvider>
 
                     </Grid>
                     {page === 0 && (
                       <Grid item xs={12} sm={6}>
                         <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <DatePicker value={toDate} onChange={this.handleToDate} label="ToDate" />
+                          <DatePicker value={toDate} onChange={this.handleToDate} label="ToDate" tabIndex={0} />
                         </MuiPickersUtilsProvider>
 
                       </Grid>
@@ -343,8 +344,8 @@ export default class Home extends Component {
                 onChange={this.handlePageClick}
                 variant="fullWidth"
               >
-                <Tab label="Agenda View" />
-                <Tab label="Day View" />
+                <Tab label="Agenda View" tabIndex={0} />
+                <Tab label="Day View" tabIndex={0} />
               </Tabs>
             </div>
             {page === 0 ? (
