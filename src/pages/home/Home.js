@@ -287,7 +287,7 @@ export default class Home extends Component {
     this.setState({
       page: newValue,
       eventList: [],
-    });
+    }, () => this.filterByDate());
   };
 
   render() {
