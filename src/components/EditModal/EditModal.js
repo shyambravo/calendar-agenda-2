@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import React, { Component } from 'react';
 import { Input } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -17,6 +18,7 @@ export default class EditModal extends Component {
       closeModal: null,
       editEventSubmit: null,
     };
+    this.myRef = React.createRef();
 
     this.modalHandleChange = this.modalHandleChange.bind(this);
     this.updateState = this.updateState.bind(this);
@@ -46,6 +48,7 @@ export default class EditModal extends Component {
     if (prevProps !== this.props) {
       this.updateState(title, color, description, fromTime, toTime, closeModal, editEventSubmit);
     }
+    this.myRef.current.focus();
   }
 
   modalHandleChange = (type, e) => {
@@ -102,6 +105,7 @@ export default class EditModal extends Component {
       title, color, description, fromTime, toTime,
     } = this.state;
     return (
+      // eslint-disable-next-line jsx-a11y/tabindex-no-positive
       <div className="agenda-backdrop">
         <div className="agenda-modal">
           <h3>Edit Event</h3>
@@ -112,20 +116,22 @@ export default class EditModal extends Component {
             label="Title"
             variant="outlined"
             className="agenda-modal-input"
+            tabIndex={0}
+            ref={this.myRef}
           />
           <div className="agenda-modal-date">
             <MuiPickersUtilsProvider utils={MomentUtils}>
-              <DateTimePicker value={fromTime} onChange={(e) => this.modalHandleChange('fromTime', e)} label="FromTime" />
+              <DateTimePicker value={fromTime} onChange={(e) => this.modalHandleChange('fromTime', e)} label="FromTime" tabIndex={0} />
             </MuiPickersUtilsProvider>
           </div>
           <div className="agenda-modal-date">
             <MuiPickersUtilsProvider utils={MomentUtils}>
-              <DateTimePicker value={toTime} onChange={(e) => this.modalHandleChange('toTime', e)} label="ToTime" />
+              <DateTimePicker value={toTime} onChange={(e) => this.modalHandleChange('toTime', e)} label="ToTime" tabIndex={0} />
             </MuiPickersUtilsProvider>
           </div>
 
           <div className="color-picker-container">
-            <Input type="color" variant="outlined" className="color-picker" placeholder="select color" onChange={(e) => this.modalHandleChange('color', e)} value={color} />
+            <Input type="color" variant="outlined" className="color-picker" placeholder="select color" onChange={(e) => this.modalHandleChange('color', e)} value={color} tabIndex={0} />
             <p>select color</p>
           </div>
           <TextField
@@ -138,6 +144,7 @@ export default class EditModal extends Component {
             style={{ width: '100%', marginTop: '20px' }}
             value={description}
             onChange={(e) => this.modalHandleChange('description', e)}
+            tabIndex={0}
           />
           <div className="modal-buttons">
             <Button
@@ -145,6 +152,7 @@ export default class EditModal extends Component {
               color="primary"
               style={{ width: '45%', marginRight: '10%' }}
               onClick={() => this.editEventSubmit()}
+              tabIndex={0}
             >
               Edit
             </Button>
@@ -153,6 +161,7 @@ export default class EditModal extends Component {
               color="primary"
               style={{ width: '45%' }}
               onClick={() => this.closeModal()}
+              tabIndex={0}
             >
               Close
             </Button>
