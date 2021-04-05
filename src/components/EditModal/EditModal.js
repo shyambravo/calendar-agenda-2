@@ -17,6 +17,7 @@ export default class EditModal extends Component {
       toTime: '',
       closeModal: null,
       editEventSubmit: null,
+      focus: null,
     };
     this.myRef = React.createRef();
 
@@ -39,6 +40,7 @@ export default class EditModal extends Component {
       editEventSubmit,
       closeModal,
     });
+    this.myRef.current.focus();
   }
 
   componentDidUpdate(prevProps) {
@@ -48,7 +50,6 @@ export default class EditModal extends Component {
     if (prevProps !== this.props) {
       this.updateState(title, color, description, fromTime, toTime, closeModal, editEventSubmit);
     }
-    // this.myRef.current.focus();
   }
 
   modalHandleChange = (type, e) => {
