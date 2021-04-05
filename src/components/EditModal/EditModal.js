@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import Button from '@material-ui/core/Button';
+import moment from 'moment';
 
 export default class EditModal extends Component {
   constructor(props) {
@@ -52,14 +53,23 @@ export default class EditModal extends Component {
   }
 
   modalHandleChange = (type, e) => {
+    const { fromTime, toTime } = this.state;
     if (type === 'fromTime') {
-      this.setState({
-        fromTime: e,
-      });
+      if (moment(e, 'YYYY-MM-DDTHH:mm').isBefore(toTime, 'YYYY-MM-DDTHH:mm')) {
+        this.setState({
+          fromTime: e,
+        });
+      } else {
+        alert('Invalid time');
+      }
     } else if (type === 'toTime') {
-      this.setState({
-        toTime: e,
-      });
+      if (moment(e, 'YYYY-MM-DDTHH:mm').isAfter(fromTime, 'YYYY-MM-DDTHH:mm')) {
+        this.setState({
+          toTime: e,
+        });
+      } else {
+        alert('Invalid Date');
+      }
     } else if (type === 'color') {
       this.setState({
         color: e.target.value,

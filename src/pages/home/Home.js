@@ -12,7 +12,6 @@ import Tab from '@material-ui/core/Tab';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import AlertModal from '../../components/AlertModal/AlertModal';
-
 import EventStore from '../../store/events';
 import MonthView from './MonthView';
 import DayView from './DayView';
