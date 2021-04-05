@@ -48,7 +48,7 @@ export default class EditModal extends Component {
     if (prevProps !== this.props) {
       this.updateState(title, color, description, fromTime, toTime, closeModal, editEventSubmit);
     }
-    this.myRef.current.focus();
+    // this.myRef.current.focus();
   }
 
   modalHandleChange = (type, e) => {
