@@ -6,6 +6,7 @@ import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
+import AlertModal from '../AlertModal/AlertModal';
 
 export default class EditModal extends Component {
   constructor(props) {
@@ -18,6 +19,8 @@ export default class EditModal extends Component {
       toTime: '',
       closeModal: null,
       editEventSubmit: null,
+      isAlert: false,
+      alertMessage: '',
     };
     this.myRef = React.createRef();
 
@@ -25,6 +28,7 @@ export default class EditModal extends Component {
     this.updateState = this.updateState.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.editEventSubmit = this.editEventSubmit.bind(this);
+    this.closeAlert = this.closeAlert.bind(this);
   }
 
   componentDidMount() {
@@ -60,7 +64,10 @@ export default class EditModal extends Component {
           fromTime: e,
         });
       } else {
-        alert('Invalid time');
+        this.setState({
+          isAlert: true,
+          alertMessage: 'Invalid Time',
+        });
       }
     } else if (type === 'toTime') {
       if (moment(e, 'YYYY-MM-DDTHH:mm').isAfter(fromTime, 'YYYY-MM-DDTHH:mm')) {
@@ -68,7 +75,10 @@ export default class EditModal extends Component {
           toTime: e,
         });
       } else {
-        alert('Invalid Date');
+        this.setState({
+          isAlert: true,
+          alertMessage: 'Invalid Time',
+        });
       }
     } else if (type === 'color') {
       this.setState({
@@ -84,6 +94,12 @@ export default class EditModal extends Component {
       });
     }
   };
+
+  closeAlert = () => {
+    this.setState({
+      isAlert: false,
+    });
+  }
 
   closeModal = () => {
     const { closeModal } = this.state;
@@ -112,11 +128,14 @@ export default class EditModal extends Component {
 
   render() {
     const {
-      title, color, description, fromTime, toTime,
+      title, color, description, fromTime, toTime, isAlert, alertMessage,
     } = this.state;
     return (
       // eslint-disable-next-line jsx-a11y/tabindex-no-positive
       <div className="agenda-backdrop">
+        {
+          isAlert && <AlertModal message={alertMessage} closeModal={this.closeAlert} />
+        }
         <div className="agenda-modal">
           <h3>Edit Event</h3>
           <TextField
