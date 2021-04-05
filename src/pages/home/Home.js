@@ -287,6 +287,9 @@ export default class Home extends Component {
     this.setState({
       page: newValue,
       eventList: [],
+      eventObj: [],
+      fromDate: moment().format('YYYY-MM-DD'),
+      toDate: moment().format('YYYY-MM-DD'),
     }, () => this.filterByDate());
   };
 
