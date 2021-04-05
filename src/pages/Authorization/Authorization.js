@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { getAuthURL } from '../../services/Events';
+import config from '../../../config';
 import './Authorization.css';
 
 export default class Authorization extends Component {
@@ -9,12 +11,12 @@ export default class Authorization extends Component {
     this.authorize = this.authorize.bind(this);
   }
 
-  authorize = () => {
+  authorize = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken !== null) {
-      window.location = 'http://127.0.0.1:3000/home';
+      window.location = config.REACT_APP_URL;
     } else {
-      window.location = `https://accounts.zoho.com/oauth/v2/auth?scope=ZohoCalendar.calendar.ALL%2CZohoCalendar.event.ALL&client_id=${process.env.REACT_APP_CLIENT_ID}&response_type=code&redirect_uri=http://127.0.0.1:3000/home&access_type=offline&prompt=consent`;
+      window.location = await getAuthURL();
     }
   };
 

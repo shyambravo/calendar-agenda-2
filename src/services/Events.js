@@ -1,10 +1,15 @@
 // get Evens by calendar name and date
 import moment from 'moment';
+import config from '../../config';
 
 const verifyToken = () => {
   const tokenTime = sessionStorage.getItem('tokenTime');
   const currentTime = moment().format('YYYY MM DD, HH:mm:ss');
-  if (moment(currentTime, 'YYYY MM DD, HH:mm:ss').isBefore(moment(tokenTime, 'YYYY MM DD, HH:mm:ss'))) {
+  if (
+    moment(currentTime, 'YYYY MM DD, HH:mm:ss').isBefore(
+      moment(tokenTime, 'YYYY MM DD, HH:mm:ss'),
+    )
+  ) {
     return true;
   }
   alert('Token expired');
@@ -15,9 +20,8 @@ const verifyToken = () => {
 
 const getAccessToken = async (code) => {
   const token = await fetch(
-    `${process.env.REACT_APP_BACKEND_URL}/authorization/${code}/${process.env.REACT_APP_CLIENT_ID}/${process.env.REACT_APP_CLIENT_SECRET}`,
-  )
-    .then((res) => res.text());
+    `${config.REACT_APP_BACKEND_URL}/authorization/${code}`,
+  ).then((res) => res.text());
 
   return token;
 };
@@ -46,11 +50,13 @@ const getEvents = async (token, cid, fromDate, toDate) => {
     };
   }
   const result = await fetch(
-    `${process.env.REACT_APP_BACKEND_URL}/getEventList/${token}/${cid}`, params,
+    `${config.REACT_APP_BACKEND_URL}/getEventList/${token}/${cid}`,
+    params,
   ).then((res) => {
     if (res.status === 200) {
       return res.json();
-    } if (res.status === 401) {
+    }
+    if (res.status === 401) {
       return 1;
     }
     return 0;
@@ -63,10 +69,13 @@ const getEvents = async (token, cid, fromDate, toDate) => {
 
 const getCalendars = async (token) => {
   verifyToken();
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getCalendars/${token}`).then((res) => {
+  const result = await fetch(
+    `${config.REACT_APP_BACKEND_URL}/getCalendars/${token}`,
+  ).then((res) => {
     if (res.status === 200) {
       return res.json();
-    } if (res.status === 401) {
+    }
+    if (res.status === 401) {
       return 0;
     }
     return 1;
@@ -79,8 +88,12 @@ const getCalendars = async (token) => {
 
 const editEvent = async (data) => {
   verifyToken();
-  const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format('YYYYMMDDTHHmmSSZZ');
-  const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format('YYYYMMDDTHHmmSSZZ');
+  const fromDate = moment(data.fromTime, 'YYYY-MM-DDTHH:mm').format(
+    'YYYYMMDDTHHmmSSZZ',
+  );
+  const toDate = moment(data.toTime, 'YYYY-MM-DDTHH:mm').format(
+    'YYYYMMDDTHHmmSSZZ',
+  );
   const { timezone } = data.dateandtime;
 
   const obj = {
@@ -103,7 +116,10 @@ const editEvent = async (data) => {
     method: 'POST',
     body: JSON.stringify(obj),
   };
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/editEvent/${token}`, params).then((res) => {
+  const result = await fetch(
+    `${config.REACT_APP_BACKEND_URL}/editEvent/${token}`,
+    params,
+  ).then((res) => {
     if (res.status === 200) {
       return res.json();
     }
@@ -120,17 +136,24 @@ const editEvent = async (data) => {
 };
 
 const getnewtoken = async (refreshToken) => {
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/getnewtoken/${refreshToken}/${process.env.REACT_APP_CLIENT_ID}/${process.env.REACT_APP_CLIENT_SECRET}`).then((res) => res.json()).catch(() => 0);
+  const result = await fetch(
+    `${config.REACT_APP_BACKEND_URL}/getnewtoken/${refreshToken}`,
+  )
+    .then((res) => res.json())
+    .catch(() => 0);
   return result;
 };
 
 const fetcheventdetails = async (cid, eid) => {
   verifyToken();
   const token = sessionStorage.getItem('token');
-  const result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/geteventdetails/${token}/${cid}/${eid}`).then((res) => {
+  const result = await fetch(
+    `${config.REACT_APP_BACKEND_URL}/geteventdetails/${token}/${cid}/${eid}`,
+  ).then((res) => {
     if (res.status === 200) {
       return res.json();
-    } if (res.status === 401) {
+    }
+    if (res.status === 401) {
       return 1;
     }
     return 0;
@@ -141,6 +164,20 @@ const fetcheventdetails = async (cid, eid) => {
   return 0;
 };
 
+const getAuthURL = async () => {
+  const result = await fetch(
+    `${config.REACT_APP_BACKEND_URL}/getauthcode`,
+  ).then((res) => res.text());
+  return result;
+};
+
 export {
-  getEvents, getAccessToken, getCalendars, editEvent, verifyToken, getnewtoken, fetcheventdetails,
+  getEvents,
+  getAccessToken,
+  getCalendars,
+  editEvent,
+  verifyToken,
+  getnewtoken,
+  fetcheventdetails,
+  getAuthURL,
 };

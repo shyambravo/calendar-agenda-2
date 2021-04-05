@@ -29,9 +29,6 @@ export default {
     livereload({ watch: '.bin' }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
-      'process.env.REACT_APP_CLIENT_ID': JSON.stringify('1000.2FPNS073IFQ2YJWT9AJJ35WHVAYFQO'),
-      'process.env.REACT_APP_CLIENT_SECRET': JSON.stringify('081d233590dca027ff0b5c4d141b981e556ba6cb1d'),
-      'process.env.REACT_APP_BACKEND_URL': JSON.stringify('http://localhost:5000'),
     }),
     external(),
     postcss({
