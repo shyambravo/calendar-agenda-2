@@ -213,26 +213,37 @@ export default class DayView extends Component {
     });
   };
 
-  editEvent = async (e) => {
-    const { calColor } = this.props;
-    const { cid } = this.state;
-    const eventData = await fetcheventdetails(cid, e.id);
-    let description = '';
-    if (eventData) {
-      if (eventData.events[0].description !== undefined) {
-        description = eventData[0].description;
+  editEvent = async (e, keyEvent = null) => {
+    let flag = false;
+    if (keyEvent !== null) {
+      if (keyEvent.keyCode === 32) {
+        flag = true;
       }
+    } else {
+      flag = true;
     }
 
-    this.setState({
-      isModal: true,
-      editEvent: e,
-      fromTime: e.fromTime,
-      toTime: e.toTime,
-      title: e.title,
-      color: e.color === '' ? calColor : e.color,
-      description,
-    });
+    if (flag === true) {
+      const { calColor } = this.props;
+      const { cid } = this.state;
+      const eventData = await fetcheventdetails(cid, e.id);
+      let description = '';
+      if (eventData) {
+        if (eventData.events[0].description !== undefined) {
+          description = eventData[0].description;
+        }
+      }
+
+      this.setState({
+        isModal: true,
+        editEvent: e,
+        fromTime: e.fromTime,
+        toTime: e.toTime,
+        title: e.title,
+        color: e.color === '' ? calColor : e.color,
+        description,
+      });
+    }
   };
 
   editEventSubmit = async (title, color, description, fromTime, toTime) => {
@@ -314,7 +325,7 @@ export default class DayView extends Component {
                 }}
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
-                onKeyDown={() => this.editEvent(event)}
+                onKeyDown={(keyEvent) => this.editEvent(event, keyEvent)}
                 onClick={() => this.editEvent(event)}
                 // eslint-disable-next-line no-plusplus
                 // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex

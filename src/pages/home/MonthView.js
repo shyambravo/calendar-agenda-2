@@ -60,31 +60,42 @@ export default class MonthView extends Component {
     });
   }
 
-  editEventTrigger = async (e) => {
-    const { calColor, cid } = this.state;
-    const eventData = await fetcheventdetails(cid, e.id);
-    const fromTime = moment(
-      e.fromDate,
-      'dddd, MMMM Do YYYY, h:mm:ss a',
-    ).format('YYYY-MM-DDTHH:mm');
-    const toTime = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format(
-      'YYYY-MM-DDTHH:mm',
-    );
-    let description = '';
-    if (eventData) {
-      if (eventData.events[0].description !== undefined) {
-        description = eventData[0].description;
+  editEventTrigger = async (e, keyEvent = null) => {
+    let flag = false;
+    if (keyEvent !== null) {
+      if (keyEvent.keyCode === 32) {
+        flag = true;
       }
+    } else {
+      flag = true;
     }
-    this.setState({
-      title: e.title,
-      color: e.color === '' ? calColor : e.color,
-      description,
-      fromTime,
-      toTime,
-      editEvent: e,
-      isModal: true,
-    });
+
+    if (flag === true) {
+      const { calColor, cid } = this.state;
+      const eventData = await fetcheventdetails(cid, e.id);
+      const fromTime = moment(
+        e.fromDate,
+        'dddd, MMMM Do YYYY, h:mm:ss a',
+      ).format('YYYY-MM-DDTHH:mm');
+      const toTime = moment(e.toDate, 'dddd, MMMM Do YYYY, h:mm:ss a').format(
+        'YYYY-MM-DDTHH:mm',
+      );
+      let description = '';
+      if (eventData) {
+        if (eventData.events[0].description !== undefined) {
+          description = eventData[0].description;
+        }
+      }
+      this.setState({
+        title: e.title,
+        color: e.color === '' ? calColor : e.color,
+        description,
+        fromTime,
+        toTime,
+        editEvent: e,
+        isModal: true,
+      });
+    }
   }
 
   editEventSubmit = async (title, color, description, fromTime, toTime) => {
@@ -149,7 +160,7 @@ export default class MonthView extends Component {
                         <li
                           className="time-list"
                           key={`time ${index2}`}
-                          onKeyDown={() => this.editEventTrigger(time)}
+                          onKeyDown={(event) => this.editEventTrigger(time, event)}
                           onClick={() => this.editEventTrigger(time)}
                           // eslint-disable-next-line no-plusplus
                           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
