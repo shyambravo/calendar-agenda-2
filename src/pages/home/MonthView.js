@@ -149,7 +149,7 @@ export default class MonthView extends Component {
                         <li
                           className="time-list"
                           key={`time ${index2}`}
-                          onFocus={() => this.editEventTrigger(time)}
+                          onClick={() => this.editEventTrigger(time)}
                           // eslint-disable-next-line no-plusplus
                           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
                           tabIndex={0}
