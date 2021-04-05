@@ -315,6 +315,7 @@ export default class DayView extends Component {
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 onKeyDown={() => this.editEvent(event)}
+                onClick={() => this.editEvent(event)}
                 // eslint-disable-next-line no-plusplus
                 // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
                 tabIndex={0}
