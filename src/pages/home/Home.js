@@ -51,6 +51,7 @@ export default class Home extends Component {
     this.handleToDate = this.handleToDate.bind(this);
     this.handlePageClick = this.handlePageClick.bind(this);
     this.filterByDate = this.filterByDate.bind(this);
+    this.sortArrayByDate = this.sortArrayByDate.bind(this);
     this.storeByKeys = this.storeByKeys.bind(this);
     this.updateCollection = this.updateCollection.bind(this);
   }
@@ -131,6 +132,13 @@ export default class Home extends Component {
     );
   };
 
+  sortArrayByDate = async (arr) => {
+    arr.sort((a, b) => a.date - b.date);
+    const result = await this.storeByKeys(arr);
+
+    return result;
+  }
+
   storeByKeys = (arr) => {
     const eventObj = {};
     for (let i = 0; i < arr.length; i += 1) {
@@ -176,7 +184,7 @@ export default class Home extends Component {
     this.setState({
       eventList: eventStore.eventCollection.toJSON(),
     });
-    const result = await this.storeByKeys(eventStore.eventCollection.toJSON());
+    const result = await this.sortArrayByDate(eventStore.eventCollection.toJSON());
     this.storeByKeys(result);
   };
 
