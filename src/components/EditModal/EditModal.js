@@ -17,7 +17,6 @@ export default class EditModal extends Component {
       toTime: '',
       closeModal: null,
       editEventSubmit: null,
-      focus: null,
     };
     this.myRef = React.createRef();
 
