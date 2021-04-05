@@ -224,6 +224,9 @@ export default class DayView extends Component {
     }
 
     if (flag === true) {
+      this.setState({
+        isLoading: true,
+      });
       const { calColor } = this.props;
       const { cid } = this.state;
       const eventData = await fetcheventdetails(cid, e.id);
@@ -242,6 +245,7 @@ export default class DayView extends Component {
         title: e.title,
         color: e.color === '' ? calColor : e.color,
         description,
+        isLoading: false,
       });
     }
   };

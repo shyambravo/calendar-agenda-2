@@ -5,6 +5,7 @@ import moment from 'moment';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import './Home.css';
 import React, { Component } from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import EditModal from '../../components/EditModal/EditModal';
 import { fetcheventdetails } from '../../services/Events';
 
@@ -23,6 +24,7 @@ export default class MonthView extends Component {
       store: null,
       isModal: false,
       eventList: [],
+      isLoading: false,
     };
     this.updateState = this.updateState.bind(this);
     this.editEventTrigger = this.editEventTrigger.bind(this);
@@ -57,6 +59,7 @@ export default class MonthView extends Component {
       calColor,
       store,
       eventList,
+      isLoading: false,
     });
   }
 
@@ -71,6 +74,9 @@ export default class MonthView extends Component {
     }
 
     if (flag === true) {
+      this.setState({
+        isLoading: true,
+      });
       const { calColor, cid } = this.state;
       const eventData = await fetcheventdetails(cid, e.id);
       const fromTime = moment(
@@ -94,6 +100,7 @@ export default class MonthView extends Component {
         toTime,
         editEvent: e,
         isModal: true,
+        isLoading: false,
       });
     }
   }
@@ -119,6 +126,7 @@ export default class MonthView extends Component {
       fromTime,
       toTime,
       isModal: false,
+      isLoading: true,
     });
   };
 
@@ -130,7 +138,7 @@ export default class MonthView extends Component {
 
   render() {
     const {
-      isModal, title, description, fromTime, toTime, color, eventList,
+      isModal, title, description, fromTime, toTime, color, eventList, isLoading,
     } = this.state;
     return (
       <div className="agenda-listing">
@@ -145,6 +153,13 @@ export default class MonthView extends Component {
           closeModal={this.closeModal}
         />
         )}
+        {
+          isLoading && (
+          <div className="backdrop">
+            <CircularProgress disableShrink className="loader" />
+          </div>
+          )
+        }
         <div className="list">
           <ul className="event-list">
             {eventList != null
